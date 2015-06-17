@@ -1,0 +1,138 @@
+header{
+	background-color : black;
+}
+
+h1{
+	font-family: kikeletregular;
+	color: white;
+	font-size: 50px;
+	margin: 20px;
+}
+
+h2{
+	color: white;
+	font-size: 30px;
+	margin: 20px;
+	margin-left: 50px;
+}
+
+@font-face {
+    font-family: 'kikeletregular';
+    src: url('kikelet-webfont.eot');
+    src: url('kikelet-webfont.eot?#iefix') format('embedded-opentype'),
+         url('kikelet-webfont.woff2') format('woff2'),
+         url('kikelet-webfont.woff') format('woff'),
+         url('kikelet-webfont.ttf') format('truetype'),
+         url('kikelet-webfont.svg#kikeletregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.bloc_page {
+	border: 2px solid black;
+	border-radius: 5px;
+	padding: 50px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.listeGene{
+	display: inline-block;
+	text-align: center;
+	margin-left: 90px;
+	color: white;
+}
+
+.listeGene ul
+{
+	list-style-type: none;
+}
+
+.listeGene li
+{
+	display: inline-block;
+	margin-right: 15px;
+}
+.listeGene a
+{
+
+	font-size: 1.3em;
+	color: white;
+	padding-bottom: 3px;
+	text-decoration: none;
+
+}
+.listeGene a:hover
+{
+	color: white;
+	border-bottom: 3px solid white;
+}
+
+#logo, header h1
+
+{
+	display: inline-block;
+	margin: 20px;
+	margin-bottom: 0px;
+}
+/* Navigation */
+
+
+nav
+
+{
+	display: inline-block;
+	text-align: center;
+	margin-left: 90px;
+	background-color: white;
+	border: 1px solid white;
+	border-top-left-radius: 22px;
+	border-top-right-radius: 22px;
+	padding-right: 20px;
+	
+}
+
+nav ul
+{
+	list-style-type: none;
+}
+
+nav li
+{
+	display: inline-block;
+	margin-right: 15px;
+}
+nav a
+{
+
+	font-size: 1.3em;
+	color: black;
+	text-decoration: none;
+
+}
+nav a:hover
+{
+	color: black;
+	border-bottom: 3px solid black;
+}
+
+.svg-content {
+display: inline-block;
+position: absolute;
+top: 0;
+left: 0
+overflow: scroll;
+}
+
+.svg-container {
+display: inline-block;
+position: relative;
+width: 100%;
+padding-bottom: 50%;
+vertical-align: middle;
+overflow: scroll;
+}
+
+
+
