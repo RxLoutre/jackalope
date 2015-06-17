@@ -311,29 +311,32 @@ elif args.listed:
 	i=1
 	sumtemp = 0
 	numeroLigne = 1
-	listeTrans = dicotrans.keys()
-	listeTrans.sort()
-	for trans in range(len(listeTrans)):
-		for elem in C:
-			debutComposante = (left_margin + (i - 1) * sigma + alpha * sumtemp) + text_margin
-			finComposante = debutComposante + alpha * elem.maxLen
-			minStart = elem.minStart
-			for exon in elem.connected_comp:
-				if(listeTrans[trans] in exon.parentId and exon.ensemblId in listEx):
-					debutExon = float(exon.seqStart)
-					finExon = float(exon.seqEnd)
-					interExon = finExon - debutExon
-					debutDessin = ((finComposante-debutComposante)/(elem.maxEnd - elem.minStart))*(debutExon-elem.minStart) + debutComposante
-					finDessin = ((finComposante-debutComposante)/(elem.maxEnd - elem.minStart))*(finExon-elem.minStart) + debutComposante					
-					drawExon(dwg,espacement+numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
-					listEx.remove(exon.ensemblId)
-			i += 1
-			sumtemp += elem.maxLen
-			couleur = (couleur + 1) % len(listeCouleur)	
-		espacement += 0.5
-		numeroLigne += 1
-		sumtemp = 0
-		i=1			
-	dwg.save()
+	currentExons = []
+	for cc in C:
+		debutComposante = (left_margin + (i - 1) * sigma + alpha * sumtemp) + text_margin
+		finComposante = debutComposante + alpha * cc.maxLen
+		minStart = cc.minStart
+		print str(debutComposante)
+		print str(finComposante)
+		for exon in cc.connected_comp:
+			print exon			
+			for wex in currentExons:
+				if(wex.overlaps(exon)):
+					numeroLigne += 1
+					currentExons = []
+					break;
+			debutExon = float(exon.seqStart)
+			finExon = float(exon.seqEnd)
+			interExon = finExon - debutExon
+			debutDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(debutExon-cc.minStart) + debutComposante
+			finDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(finExon-cc.minStart) + debutComposante
+			drawExon(dwg,numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+			currentExons.append(exon)
+			
+		i += 1
+		sumtemp += cc.maxLen
+		couleur = (couleur + 1) % len(listeCouleur)
+		numeroLigne = 1
+		dwg.save()
 	
 	

@@ -23,6 +23,11 @@ class location:
 		"\t" + self.seqStrand
 		return s
 		
+	def overlaps(self,other):
+		if((self.seqStart <= other.seqEnd) and (other.seqStart <= self.seqEnd)) or ((other.seqStart <= self.seqEnd) and (self.seqStart <= other.seqEnd)):
+			return True
+		else:
+			return False
 				
 class exon(location):
 	"""
