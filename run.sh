@@ -1,0 +1,11 @@
+./draw_transcript.sh ABI1 ENSG00000136754
+./draw_transcript.sh SLK ENSG00000065613
+./draw_transcript.sh ESYT2 ENSG00000117868
+./draw_transcript.sh ENAH ENSG00000154380
+./draw_transcript.sh FNIP1 ENSG00000217128
+./draw_transcript.sh NUMB ENSG00000133961
+./draw_transcript.sh RAI14 ENSG00000039560
+./draw_transcript.sh NUMA1 ENSG00000137497
+./draw_transcript.sh EXOC7 ENSG00000182473
+./draw_transcript.sh EXOC1 ENSG00000090989
+./draw_transcript.sh MAP3K7 ENSG00000135341

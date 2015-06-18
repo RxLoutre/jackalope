@@ -316,10 +316,7 @@ elif args.listed:
 		debutComposante = (left_margin + (i - 1) * sigma + alpha * sumtemp) + text_margin
 		finComposante = debutComposante + alpha * cc.maxLen
 		minStart = cc.minStart
-		print str(debutComposante)
-		print str(finComposante)
-		for exon in cc.connected_comp:
-			print exon			
+		for exon in cc.connected_comp:		
 			for wex in currentExons:
 				if(wex.overlaps(exon)):
 					numeroLigne += 1
