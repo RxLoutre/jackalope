@@ -68,7 +68,60 @@ class con_com:
 		 return ((self.connected_comp[0].seqStart)  < (other.connected_comp[0].seqStart))
 		 
 	def __gt__(self,other):
-		 return ((self.connected_comp[0].seqStart)  > (other.connected_comp[0].seqStart))	 		
+		 return ((self.connected_comp[0].seqStart)  > (other.connected_comp[0].seqStart))
+		 
+class exon_box:
+	"""
+	An intermediary class which allow to store properly all the needed
+	informations to draw an exon. Start is (x1,y), width is (x2-x1)
+	height is fixed by the programm. A RGB color is given, and also
+	the exon ensembl id to allow a tool tip
+	"""
+	def __init__(self,y,x1,x2,color,id_exon):
+		self.y = y * line_height
+		self.x = x1
+		self.height = exon_height
+		self.width = (x2 - x1)
+		self.color = color
+		self.id_exon = id_exon
+		
+class legend_text:
+	"""
+	An intermediary class which allow to complete the draw with 
+	a legend containing the ensembl id of the transcript of the y line
+	"""
+	def __init__(self,lineNumber,id_transcript):
+		self.x = left_margin
+		self.y = lineNumber*line_height+3*exon_height/4.0
+		self.text = id_transcript
+		
+class drawing:
+	"""
+	An intermediary class which contains all data for drawing all
+	the transcript of a gene
+	"""
+	def __init__(self,width,height):
+		self.list_exon_boxes = []
+		self.list_legend = []
+		self.width = width
+		self.height = height
+		
+	def append_exon_box(self,exon_box):
+		self.list_exon_boxes.append(exon_box)
+		
+	def append_legend(self,legend):
+		self.list_legend.append(legend)
+		
+	def draw_SVG(self,fileName):
+		dwg = initDraw(fileName,self.width,self.height)
+		for ex in self.list_exon_boxes:
+			drawExon(dwg,ex.y,ex.x,(ex.x + ex.width),ex.color,ex.id_exon)
+		for tr in self.list_legend:
+			startNewTranscript(dwg,tr.x,tr.y,tr.text)
+		dwg.save()
+		
+	#def draw_JSON(self):
+		
 
 def genesFromGFF(fileName):
 	"""
@@ -111,7 +164,6 @@ def initDraw(name,dimX,dimY):
 	"""
 	dwg = svgwrite.Drawing(name,size=(dimX,dimY), profile='full')
 	dwg.add(dwg.rect((0,0),(dimX,dimY),fill=svgwrite.rgb(255,255,255)))
-	dwg.add_stylesheet("../styleSVG.css","styleSVG.css")
 	return dwg
 
 def drawExon(dwg,lineNumber,start,end,rvb,idExon):
@@ -121,7 +173,7 @@ def drawExon(dwg,lineNumber,start,end,rvb,idExon):
 	at the line 'lineNumber' (y position) with the color
 	'rvb'
 	"""
-	dwg.add(dwg.rect((start,lineNumber*line_height),(end - start, exon_height),fill=svgwrite.rgb(rvb[0],rvb[1],rvb[2]),id="exon",onmouseover="evt.target.setAttribute('opacity', '0.5');",onmouseout="evt.target.setAttribute('opacity','1)');"))
+	dwg.add(dwg.rect((start,lineNumber),(end - start, exon_height),fill=svgwrite.rgb(rvb[0],rvb[1],rvb[2]),id="exon",onmouseover="evt.target.setAttribute('opacity', '0.5');",onmouseout="evt.target.setAttribute('opacity','1)');"))
 
 def drawHighlightExon(dwg,lineNumber,start,end,rvb,idExon):
 	"""
@@ -130,13 +182,13 @@ def drawHighlightExon(dwg,lineNumber,start,end,rvb,idExon):
 	dwg.add(dwg.rect((start,lineNumber*line_height),(end - start, exon_height),stroke=svgwrite.rgb(231, 62, 1,'%'),fill=svgwrite.rgb(255,255,255),id="exon",onmouseover="evt.target.setAttribute('opacity', '0.5');",onmouseout="evt.target.setAttribute('opacity','1)');"))
 	
 
-def startNewTranscript(dwg,trNb,lineNumber,idTranscrit):
+def startNewTranscript(dwg,x,y,idTranscrit):
 	"""
 	A function which write on the left of the draw, at line
 	'lineNumber' the name of the transcript 'idTranscrit' on 
 	an opened dwg draw
 	"""
-	dwg.add(dwg.text(idTranscrit, insert=(left_margin,(lineNumber*line_height+3*exon_height/4.0))))
+	dwg.add(dwg.text(idTranscrit, insert=(x,y)))
 
 def buildGraph(dicogene):
 	"""
@@ -223,7 +275,7 @@ if args.fixed:
 	K = nx.number_connected_components(G)
 	nbTrans = len(dicotrans)
 	(dimensionX,dimensionY) = drawDimension(K,nbTrans)
-	dwg = initDraw(args.output,dimensionX,dimensionY)
+	draw = drawing(dimensionX,dimensionY)
 	#Calcul de Alpha => coefficient de proportionnalite entre coordonnees ecran et coordonnees chromosomiques
 	sumMaxLen = 0
 	for elem in C:
@@ -236,7 +288,8 @@ if args.fixed:
 	listeTrans = dicotrans.keys()
 	listeTrans.sort()
 	for trans in range(len(listeTrans)):
-		startNewTranscript(dwg,numeroLigne+1,espacement+numeroLigne,listeTrans[trans])
+		transcript_legend = legend_text(numeroLigne,listeTrans[trans])
+		draw.append_legend(transcript_legend)
 		for elem in C:
 			debutComposante = (left_margin + (i - 1) * sigma + alpha * sumtemp) + text_margin
 			finComposante = debutComposante + alpha * elem.maxLen
@@ -248,24 +301,23 @@ if args.fixed:
 					interExon = finExon - debutExon
 					debutDessin = ((finComposante-debutComposante)/(elem.maxEnd - elem.minStart))*(debutExon-elem.minStart) + debutComposante
 					finDessin = ((finComposante-debutComposante)/(elem.maxEnd - elem.minStart))*(finExon-elem.minStart) + debutComposante
-					if(args.specific_exon and args.specific_exon == exon.ensemblId):
-						drawHighlightExon(dwg,espacement+numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
-					else:
-						drawExon(dwg,espacement+numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+					exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+					draw.append_exon_box(exBx)
 			i += 1
 			sumtemp += elem.maxLen
 		couleur = (couleur + 1) % len(listeCouleur)	
 		espacement += 0.5
 		numeroLigne += 1
 		sumtemp = 0
-		i=1			
-	dwg.save()
+		i=1
+	draw.draw_SVG(args.output)	
 	
 elif args.proportionnal:
 	drawDimension = 1200
 	nbTrans = len(dicotrans)
+	numeroLigne = 1
 	dimY = (exon_height*3) * nbTrans + 100
-	dwg = initDraw(args.output,drawDimension,dimY)
+	draw = drawing(drawDimension,dimY)
 	for genes in dicogene:
 		minStart = float(dicogene[genes].transcripts[0].exons[0].seqStart)
 		maxEnd = float(dicogene[genes].transcripts[0].exons[0].seqEnd)
@@ -278,21 +330,19 @@ elif args.proportionnal:
 		espaceTotal = float(maxEnd - minStart)
 		dicogene[genes].transcripts.sort()
 		for transcrits in dicogene[genes].transcripts:	
-			startNewTranscript(dwg,i+1,espacement+i,transcrits.ensemblId)					
+			transcript_legend = legend_text(numeroLigne,transcrits.ensemblId)
+			draw.append_legend(transcript_legend)					
 			for exon in transcrits.exons:
 				debutExon = float(exon.seqStart)
 				finExon = float(exon.seqEnd)
 				debutDessin = (espaceTotalDessin/espaceTotal)*(debutExon-minStart)+minStartDessin
 				finDessin = (espaceTotalDessin/espaceTotal)*(finExon-minStart)+minStartDessin
-				if(args.specific_exon and args.specific_exon == exon.ensemblId):
-					drawHighlightExon(dwg,espacement+i,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
-				else:
-					drawExon(dwg,espacement+i,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
-			espacement += 0.5
+				exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+				draw.append_exon_box(exBx)
 			couleur = (couleur + 1) % len(listeCouleur)		
-			i += 1
+			numeroLigne += 1
 		
-	dwg.save()
+	draw.draw_SVG(args.output)
 	
 elif args.listed:
 	G = buildGraph(dicogene)
@@ -301,7 +351,7 @@ elif args.listed:
 	nbTrans = len(dicotrans)
 	listEx = dicoexons.keys()
 	(dimensionX,dimensionY) = drawDimension(K,nbTrans)
-	dwg = initDraw(args.output,dimensionX,dimensionY)
+	draw = drawing(dimensionX,dimensionY)
 	#Calcul de Alpha => coefficient de proportionnalite entre coordonnees ecran et coordonnees chromosomiques
 	sumMaxLen = 0
 	for elem in C:
@@ -327,13 +377,14 @@ elif args.listed:
 			interExon = finExon - debutExon
 			debutDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(debutExon-cc.minStart) + debutComposante
 			finDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(finExon-cc.minStart) + debutComposante
-			drawExon(dwg,numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+			exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+			draw.append_exon_box(exBx)
 			currentExons.append(exon)
 			
 		i += 1
 		sumtemp += cc.maxLen
 		couleur = (couleur + 1) % len(listeCouleur)
 		numeroLigne = 1
-		dwg.save()
+		draw.draw_SVG(args.output)
 	
 	
