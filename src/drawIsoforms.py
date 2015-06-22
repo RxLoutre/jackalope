@@ -78,7 +78,7 @@ class exon_box:
 	the exon ensembl id to allow a tool tip
 	"""
 	def __init__(self,y,x1,x2,color,id_exon):
-		self.y = y * line_height
+		self.y = y * line_height + exon_height
 		self.x = x1
 		self.height = exon_height
 		self.width = (x2 - x1)
@@ -120,8 +120,36 @@ class drawing:
 			startNewTranscript(dwg,tr.x,tr.y,tr.text)
 		dwg.save()
 		
-	#def draw_JSON(self):
-		
+	def draw_JSON(self,nameFile):
+		cptr = 0
+		mon_fichier = open(nameFile, "w")
+		mon_fichier.write("{")
+		mon_fichier.write("\"xdessin\" : "+str(self.width)+",")
+		mon_fichier.write("\"ydessin\" : "+str(self.height)+",")
+		mon_fichier.write("\"exons\" : [ ")
+		for ex in self.list_exon_boxes:
+			mon_fichier.write("{\"x\" : "+str(ex.x)+",")
+			mon_fichier.write("\"y\" : "+str(ex.y)+",")
+			mon_fichier.write("\"width\" : "+str(ex.width)+",")
+			mon_fichier.write("\"height\" : "+str(ex.height)+",")
+			mon_fichier.write("\"color\" : { \"r\" : "+str(ex.color[0])+", \"v\" : "+str(ex.color[1])+", \"b\" : "+str(ex.color[2])+"},")
+			mon_fichier.write("\"id_exon\" : \""+ex.id_exon+"\"}")
+			if(cptr != len(self.list_exon_boxes) - 1):
+				mon_fichier.write(",")
+			cptr += 1
+		mon_fichier.write("],")
+		mon_fichier.write("\"text_transcripts\" : [ ")
+		cptr = 0
+		for tr in self.list_legend:
+			mon_fichier.write("{ \"x\" : "+str(tr.x)+",")
+			mon_fichier.write("\"y\" : "+str(tr.y)+",")
+			mon_fichier.write("\"id_transcript\" : \""+tr.text+"\"}")
+			if(cptr != len(self.list_legend) - 1):
+				mon_fichier.write(",")
+			cptr += 1
+		mon_fichier.write("]")
+		mon_fichier.write("}")
+		mon_fichier.close()
 
 def genesFromGFF(fileName):
 	"""
@@ -253,6 +281,7 @@ parser.add_argument("--fixed", help="The resulting draw will not be proportionna
 parser.add_argument("--proportionnal", help="The resulting draw will be proportionnal to chromosomal coordinate", action="store_true")
 parser.add_argument("--listed", help="The resulting draw will only show a visual list of all exons and their positions on the chromosom", action="store_true")
 parser.add_argument("--specific-exon", help="You can specify a file name which contain a list of Ensembl ID of some exons you want to be highlighted")
+parser.add_argument("--svg-output", help="By default, this programm will generate a JSON output. With this option, the programm will generate directly SVG file instead of JSON file.")
 args = parser.parse_args()
 [dicogene,dicotrans,dicoexons] = genesFromGFF(args.file);	
 espaceTotalDessin = maxEndDessin - minStartDessin
@@ -310,7 +339,10 @@ if args.fixed:
 		numeroLigne += 1
 		sumtemp = 0
 		i=1
-	draw.draw_SVG(args.output)	
+	if (args.svg_output):
+		draw.draw_SVG(args.output)
+	else:
+		draw.draw_JSON(args.output)
 	
 elif args.proportionnal:
 	drawDimension = 1200
@@ -342,7 +374,10 @@ elif args.proportionnal:
 			couleur = (couleur + 1) % len(listeCouleur)		
 			numeroLigne += 1
 		
-	draw.draw_SVG(args.output)
+	if (args.svg_output):
+		draw.draw_SVG(args.output)
+	else:
+		draw.draw_JSON(args.output)
 	
 elif args.listed:
 	G = buildGraph(dicogene)
@@ -385,6 +420,10 @@ elif args.listed:
 		sumtemp += cc.maxLen
 		couleur = (couleur + 1) % len(listeCouleur)
 		numeroLigne = 1
+		
+	if (args.svg_output):
 		draw.draw_SVG(args.output)
+	else:
+		draw.draw_JSON(args.output)
 	
 	
