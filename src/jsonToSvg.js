@@ -15,6 +15,7 @@ $.getJSON(exonFile, function(data) {
 								.attr("width",data.exons[i].width)
 								.attr("height",data.exons[i].height)
 								.style("fill","rgb("+data.exons[i].color.r+","+data.exons[i].color.v+","+data.exons[i].color.b+")")
+								.attr("id","exons_box")
 								.append("title")
 								.text(function(d) { return data.exons[i].id_exon; });
 									
