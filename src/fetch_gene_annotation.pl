@@ -5,6 +5,7 @@ use strict;
 my $registry = 'Bio::EnsEMBL::Registry';
 my $nomFichier;
 my $nomSortie;
+my $nomEspece;
 $registry->load_registry_from_db(
     -host => 'ensembldb.ensembl.org', # alternatively 'useastdb.ensembl.org'
     -user => 'anonymous'
@@ -12,14 +13,14 @@ $registry->load_registry_from_db(
     -DB_VERSION => 'GRCh37.p13'
 );
 
-GetOptions ("in=s" => \$nomFichier, "out=s" => \$nomSortie) or die ("Impossible de recuperer les options !");   
+GetOptions ("in=s" => \$nomFichier, "out=s" => \$nomSortie, "specie=s" => \$nomEspece) or die ("Impossible de recuperer les options !");   
 open(liste,"<".$nomFichier) or die("Impossible d'ouvrir le fichier listeIdGene.txt");
 my @geneList = <liste>;
 close(liste);
 my $nbGene = 1;
 foreach my $mygene (@geneList){
 	chomp($mygene);
-	&searchExon('Human',$mygene,$registry,$nbGene,$nomSortie);
+	&searchExon($nomEspece,$mygene,$registry,$nbGene,$nomSortie);
 	$nbGene = $nbGene + 1;	
 }
 
