@@ -31,6 +31,26 @@ $.getJSON(exonFile, function(data) {
 
 	}
 	
+	for (var k in data.edges){
+		line1 = svgContainer.append("line")
+							.attr("x1",data.edges[k].x1)
+							.attr("y1",data.edges[k].y1)
+							.attr("x2",data.edges[k].x2)
+							.attr("y2",data.edges[k].y2)
+							.attr("stroke-width", 2)
+							.attr("stroke", "grey")
+							.attr("id",data.edges[k].id_transcript);
+							
+		line2 = svgContainer.append("line")
+							.attr("x1",data.edges[k].x2)
+							.attr("y1",data.edges[k].y2)
+							.attr("x2",data.edges[k].x3)
+							.attr("y2",data.edges[k].y3)
+							.attr("stroke-width", 2)
+							.attr("stroke", "grey")
+							.attr("id",data.edges[k].id_transcript);
+	}
+	
 });
 
 

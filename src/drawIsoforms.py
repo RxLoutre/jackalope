@@ -32,6 +32,11 @@ sigma = 30
 
 #******Class and functions******#
 
+def frange(x, y, jump):
+		while x <= y:
+			yield x
+			x += jump
+
 class con_com:
 	"""
 	con_com => Connected Component
@@ -77,13 +82,14 @@ class exon_box:
 	height is fixed by the programm. A RGB color is given, and also
 	the exon ensembl id to allow a tool tip
 	"""
-	def __init__(self,y,x1,x2,color,id_exon):
+	def __init__(self,y,x1,x2,color,id_exon,id_transcript):
 		self.y = y * line_height + exon_height
 		self.x = x1
 		self.height = exon_height
 		self.width = (x2 - x1)
 		self.color = color
 		self.id_exon = id_exon
+		self.id_transcript = id_transcript
 		
 class legend_text:
 	"""
@@ -95,6 +101,29 @@ class legend_text:
 		self.y = lineNumber*line_height+3*exon_height/4.0
 		self.text = id_transcript
 		
+class exon_edge:
+	"""
+	An intermediary class which allow to complete the draw with 
+	lines between the different exons boxes.
+	It's composed by two lines, one wich goes to (x1,y1) to 
+	(x2,y2), and the other from (x2,y2) to (x3,y3)
+	The middle point (x2,y2) must be calculated later, once
+	all the edges between the exons are added.
+	This is in order to create a range [-1,1,1/X] to add to
+	y2 in order to see all the edges even if
+	there is X time the same edge between two exon_box
+	"""
+	def __init__(self,x1,y1,x3,y3,transcript_id,ex1_id,ex2_id):
+		self.x1 = float(x1)
+		self.y1 = float(y1)
+		self.x3 = float(x3)
+		self.y3 = float(y3)
+		self.x2 = float((x1+x3)/2)
+		self.y2 = float((y1+y3)/2)
+		self.transcript_id = transcript_id
+		self.ex1_id = ex1_id
+		self.ex2_id = ex2_id
+		
 class drawing:
 	"""
 	An intermediary class which contains all data for drawing all
@@ -103,6 +132,7 @@ class drawing:
 	def __init__(self,width,height):
 		self.list_exon_boxes = []
 		self.list_legend = []
+		self.list_exon_edges = []
 		self.width = width
 		self.height = height
 		
@@ -112,6 +142,28 @@ class drawing:
 	def append_legend(self,legend):
 		self.list_legend.append(legend)
 		
+	def append_exon_edge(self,edge):
+		self.list_exon_edges.append(edge)
+		
+	def calculate_edges(self):
+		dic_edges = {}
+		print str(len(self.list_exon_edges))
+		for edge in self.list_exon_edges:
+			if (edge.ex1_id,edge.ex2_id) not in dic_edges:
+				dic_edges[(edge.ex1_id,edge.ex2_id)] = []
+			dic_edges[(edge.ex1_id,edge.ex2_id)].append(edge)
+		self.list_exon_edge = []
+		for edge in dic_edges:
+			if(len(dic_edges[edge]) != 1):
+				myRange = frange(-1,1,float(1/len(dic_edges[edge])))
+				compteur = 0
+				for i in myRange:
+					dic_edges[edge][compteur].y2 += i
+					self.append_exon_edge(dic_edges[edge][compteur])
+					compteur += 1
+					if(compteur > len(dic_edges[edge])-1):
+						break;			
+		
 	def draw_SVG(self,fileName):
 		dwg = initDraw(fileName,self.width,self.height)
 		for ex in self.list_exon_boxes:
@@ -120,7 +172,7 @@ class drawing:
 			startNewTranscript(dwg,tr.x,tr.y,tr.text)
 		dwg.save()
 		
-	def draw_JSON(self,nameFile):
+	def draw_JSON(self,nameFile,draw_edge):
 		cptr = 0
 		mon_fichier = open(nameFile, "w")
 		mon_fichier.write("{")
@@ -147,6 +199,22 @@ class drawing:
 			if(cptr != len(self.list_legend) - 1):
 				mon_fichier.write(",")
 			cptr += 1
+		if(draw_edge):
+			mon_fichier.write("],")
+			mon_fichier.write("\"edges\" : [ ")	
+			cptr = 0
+			for edge in self.list_exon_edges:
+				mon_fichier.write("{ \"x1\" : "+str(edge.x1)+",")
+				mon_fichier.write(" \"y1\" : "+str(edge.y1)+",")
+				mon_fichier.write(" \"x2\" : "+str(edge.x2)+",")
+				mon_fichier.write(" \"y2\" : "+str(edge.y2)+",")
+				mon_fichier.write(" \"x3\" : "+str(edge.x3)+",")
+				mon_fichier.write(" \"y3\" : "+str(edge.y3)+",")				
+				mon_fichier.write("\"id_transcript\" : \""+edge.transcript_id+"\"}")
+				if(cptr != len(self.list_exon_edges) - 1):
+					mon_fichier.write(",")
+				cptr += 1
+				
 		mon_fichier.write("]")
 		mon_fichier.write("}")
 		mon_fichier.close()
@@ -330,7 +398,7 @@ if args.fixed:
 					interExon = finExon - debutExon
 					debutDessin = ((finComposante-debutComposante)/(elem.maxEnd - elem.minStart))*(debutExon-elem.minStart) + debutComposante
 					finDessin = ((finComposante-debutComposante)/(elem.maxEnd - elem.minStart))*(finExon-elem.minStart) + debutComposante
-					exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+					exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId,exon.parentId)
 					draw.append_exon_box(exBx)
 			i += 1
 			sumtemp += elem.maxLen
@@ -342,7 +410,7 @@ if args.fixed:
 	if (args.svg_output):
 		draw.draw_SVG(args.output)
 	else:
-		draw.draw_JSON(args.output)
+		draw.draw_JSON(args.output,False)
 	
 elif args.proportionnal:
 	drawDimension = 1200
@@ -369,7 +437,7 @@ elif args.proportionnal:
 				finExon = float(exon.seqEnd)
 				debutDessin = (espaceTotalDessin/espaceTotal)*(debutExon-minStart)+minStartDessin
 				finDessin = (espaceTotalDessin/espaceTotal)*(finExon-minStart)+minStartDessin
-				exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+				exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId,exon.parentId)
 				draw.append_exon_box(exBx)
 			couleur = (couleur + 1) % len(listeCouleur)		
 			numeroLigne += 1
@@ -377,7 +445,7 @@ elif args.proportionnal:
 	if (args.svg_output):
 		draw.draw_SVG(args.output)
 	else:
-		draw.draw_JSON(args.output)
+		draw.draw_JSON(args.output,False)
 	
 elif args.listed:
 	G = buildGraph(dicogene)
@@ -412,7 +480,7 @@ elif args.listed:
 			interExon = finExon - debutExon
 			debutDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(debutExon-cc.minStart) + debutComposante
 			finDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(finExon-cc.minStart) + debutComposante
-			exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId)
+			exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId,exon.parentId)
 			draw.append_exon_box(exBx)
 			currentExons.append(exon)
 			
@@ -420,10 +488,30 @@ elif args.listed:
 		sumtemp += cc.maxLen
 		couleur = (couleur + 1) % len(listeCouleur)
 		numeroLigne = 1
-		
+	
+					
+	#for i in range(len(draw.list_exon_boxes)):
+		#for j in range(len(draw.list_exon_boxes[i].id_transcript)):
+			#for k in range(len(draw.list_exon_boxes[i].id_transcript)):
+				#if(draw.list_exon_boxes[i].id_transcript[j] in draw.list_exon_boxes[k].id_transcript) and draw.list_exon_boxes[i].id_exon != draw.list_exon_boxes[k].id_exon:
+					
+	for trans in dicotrans:
+		for i in range(len(dicotrans[trans].exons)-1):
+			for ex_box in draw.list_exon_boxes:
+				if(dicotrans[trans].exons[i].ensemblId == ex_box.id_exon):
+					box1 = ex_box
+				if(dicotrans[trans].exons[i+1].ensemblId == ex_box.id_exon):
+					box2 = ex_box
+			x1 = box1.x + box1.width
+			y1 = box1.y  
+			x3 = box2.x
+			y3 = box2.y
+			edge = exon_edge(x1,y1,x3,y3,trans,box1.id_exon,box2.id_exon)
+			draw.append_exon_edge(edge)
+	draw.calculate_edges()	
 	if (args.svg_output):
 		draw.draw_SVG(args.output)
 	else:
-		draw.draw_JSON(args.output)
+		draw.draw_JSON(args.output,True)
 	
 	
