@@ -122,4 +122,6 @@ class gene(location):
 				print str(self.transcripts[i].exons[j])
 				cpt += 1
 		print "Nombre total d'exons : "
-		print str(cpt)		
+		print str(cpt)
+		
+			

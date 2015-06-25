@@ -1,6 +1,8 @@
 var elt = document.getElementById('file');
 var monTexte = elt.innerText || elt.textContent;
 var exonFile = "html_things/images/" + monTexte;
+var structureFile = "html_things/images/structure.json"
+var couleur = ["#B9121B","#5EB6DD","#C79F4B","#FF5B2B","#C44C51","#895959","#002F2F","#556627","#FF483D","#1D702D","#495CFF","#FC7F3C","#524633","#D400FF","#2E1C0B"]
 $.getJSON(exonFile, function(data) {
 	var svgContainer = d3.select("body").append("svg")
 										.attr("width",data.xdessin)
@@ -15,7 +17,7 @@ $.getJSON(exonFile, function(data) {
 								.attr("width",data.exons[i].width)
 								.attr("height",data.exons[i].height)
 								.style("fill","rgb("+data.exons[i].color.r+","+data.exons[i].color.v+","+data.exons[i].color.b+")")
-								.attr("id","exons_box")
+								.attr("id", data.exons[i].id_exon)
 								.append("title")
 								.text(function(d) { return data.exons[i].id_exon; });
 									
@@ -27,7 +29,7 @@ $.getJSON(exonFile, function(data) {
                         .attr('width', 180)
                         .attr('height', 25)
                         .append("xhtml:body")
-						.html('<div >'+data.text_transcripts[j].id_transcript+'</div>')
+						.html('<div >'+data.text_transcripts[j].id_transcript+'</div>');
 
 	}
 	
@@ -50,4 +52,30 @@ $.getJSON(exonFile, function(data) {
 	
 });
 
+$.getJSON(structureFile, function(data) {
+	for (var i in data.exons) {
+		alert(data.exons[i].id);
+		d3.selectAll("#"+data.exons[i].id)
+			.on("mouseover", function() {
+				colorIndice = 0;
+				for (var ts in data.exons[i].parents_transcripts){
+					d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
+						.attr("stroke-opacity" , 1)
+						.attr("stroke",couleur[colorIndice]);
+					colorIndice = colorIndice + 1;
+				}
+				
+			})
+			.on("mouseout", function() {
+				for (var ts in data.exons[i].parents_transcripts){
+					d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
+						.attr("stroke-opacity" , 0.2)
+						.attr("stroke","grey");
+				}
+				
+			})
+									
+	}
+	
+});
 

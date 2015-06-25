@@ -256,6 +256,32 @@ def genesFromGFF(fileName):
 				dicoexons[record.attributes["ID"]] = e
 				dicotrans[record.attributes["Parent"]].appendExon(e)
 	return [dicogene,dicotrans,dicoexons]
+	
+def writeAnnotationJson(nameFile,dicoexons):
+		mon_fichier = open(nameFile, "w")
+		mon_fichier.write("{")
+		compteur = 0
+		mon_fichier.write("\"exons\" : [")
+		for exon in dicoexons:			
+			mon_fichier.write("{\"id\" : \""+exon+"\",")
+			mon_fichier.write("\"start\" : "+str(dicoexons[exon].seqStart)+",")
+			mon_fichier.write("\"end\" : "+str(dicoexons[exon].seqEnd)+",")
+			mon_fichier.write("\"parents_transcripts\" : [")
+			cptr = 0
+			for trans in dicoexons[exon].parentId:
+				mon_fichier.write("{\"id\" : \""+trans+"\"}")
+				if(cptr != len(dicoexons[exon].parentId) - 1):
+					mon_fichier.write(",")
+				cptr += 1
+			mon_fichier.write("]")
+			mon_fichier.write("}")
+			if(compteur != len(dicoexons) - 1):
+				mon_fichier.write(",")
+			compteur += 1
+		mon_fichier.write("]")	
+		mon_fichier.write("}")
+		mon_fichier.close()		
+			
 
 def initDraw(name,dimX,dimY):
 	"""
@@ -347,17 +373,19 @@ def drawDimension(nbConnectedComponent,nbTranscript):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("file", help="The GFF3 input file (.gz allowed)")
-parser.add_argument("output", help="The SVG output file")
+parser.add_argument("output", help="The SVG/JSON output file")
 parser.add_argument("--print-count", help="Print number of gene, exons and transcript", action="store_true")
 parser.add_argument("--fixed", help="The resulting draw will not be proportionnal, intron betweend a group of overlapping exons will be fixed to a length", action="store_true")
 parser.add_argument("--proportionnal", help="The resulting draw will be proportionnal to chromosomal coordinate", action="store_true")
 parser.add_argument("--listed", help="The resulting draw will only show a visual list of all exons and their positions on the chromosom", action="store_true")
 parser.add_argument("--specific-exon", help="You can specify a file name which contain a list of Ensembl ID of some exons you want to be highlighted")
 parser.add_argument("--svg-output", help="By default, this programm will generate a JSON output. With this option, the programm will generate directly SVG file instead of JSON file.")
+parser.add_argument("--annotation", help="If specified, it produce a JSON file which contains the structure of the gene in exons and transcript")
 args = parser.parse_args()
 [dicogene,dicotrans,dicoexons] = genesFromGFF(args.file);	
 espaceTotalDessin = maxEndDessin - minStartDessin
-
+if(args.annotation):
+	writeAnnotationJson(args.annotation,dicoexons)
 if args.print_count:
 	print "Total gene : " + str(len(dicogene)) + "\n"
 	print "Total transcrits : " + str(len(dicotrans)) + "\n"
