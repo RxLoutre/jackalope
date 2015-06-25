@@ -145,14 +145,26 @@ class drawing:
 	def append_exon_edge(self,edge):
 		self.list_exon_edges.append(edge)
 		
-	#def calculate_edges(self,dicotrans):
-		#for trans in dicotrans:
-			#for i in range(len(dicotrans[trans].exons)-1):
-				#compteur = 0
-				#for edges in self.list_exon_edges:
-					#if(edges.ex1_id == dicotrans[trans].exons[i]):
-						#compteur += 1
-						
+	def calculate_edges(self,dicotrans):
+		dic_edge= {}
+		for trans in dicotrans:
+			for i in range(len(dicotrans[trans].exons)-1):
+				compteur = 0
+				box1 = dicotrans[trans].exons[i].ensemblId
+				box2 = dicotrans[trans].exons[i+1].ensemblId
+				for edges in self.list_exon_edges:
+					if(edges.ex1_id == box1 and edges.ex2_id == box2):
+						compteur += 1
+				jump = float(10.0/compteur)
+				start = 0.0
+				end = 10.0
+				for edges in self.list_exon_edges:
+					if(edges.ex1_id == box1 and edges.ex2_id == box2):
+						edges.y2 += start
+						start += jump
+						if(start > end):
+							break
+				
 		
 	def draw_SVG(self,fileName):
 		dwg = initDraw(fileName,self.width,self.height)
@@ -206,7 +218,8 @@ class drawing:
 					mon_fichier.write(",")
 				cptr += 1
 			mon_fichier.write("]")
-		
+		else:
+			mon_fichier.write("]")
 		mon_fichier.write("}")
 		mon_fichier.close()
 
@@ -479,12 +492,6 @@ elif args.listed:
 		sumtemp += cc.maxLen
 		couleur = (couleur + 1) % len(listeCouleur)
 		numeroLigne = 1
-	
-					
-	#for i in range(len(draw.list_exon_boxes)):
-		#for j in range(len(draw.list_exon_boxes[i].id_transcript)):
-			#for k in range(len(draw.list_exon_boxes[i].id_transcript)):
-				#if(draw.list_exon_boxes[i].id_transcript[j] in draw.list_exon_boxes[k].id_transcript) and draw.list_exon_boxes[i].id_exon != draw.list_exon_boxes[k].id_exon:
 					
 	for trans in dicotrans:
 		for i in range(len(dicotrans[trans].exons)-1):
@@ -493,13 +500,13 @@ elif args.listed:
 					box1 = ex_box
 				if(dicotrans[trans].exons[i+1].ensemblId == ex_box.id_exon):
 					box2 = ex_box
-			x1 = box1.x + box1.width
-			y1 = box1.y  
-			x3 = box2.x
-			y3 = box2.y
+			x1 = float(box1.x + box1.width)
+			y1 = float(box1.y) 
+			x3 = float(box2.x)
+			y3 = float(box2.y)
 			edge = exon_edge(x1,y1,x3,y3,trans,box1.id_exon,box2.id_exon)
 			draw.append_exon_edge(edge)
-	#draw.calculate_edges()	
+	draw.calculate_edges(dicotrans)	
 	if (args.svg_output):
 		draw.draw_SVG(args.output)
 	else:
