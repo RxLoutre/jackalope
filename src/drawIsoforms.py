@@ -145,24 +145,14 @@ class drawing:
 	def append_exon_edge(self,edge):
 		self.list_exon_edges.append(edge)
 		
-	def calculate_edges(self):
-		dic_edges = {}
-		print str(len(self.list_exon_edges))
-		for edge in self.list_exon_edges:
-			if (edge.ex1_id,edge.ex2_id) not in dic_edges:
-				dic_edges[(edge.ex1_id,edge.ex2_id)] = []
-			dic_edges[(edge.ex1_id,edge.ex2_id)].append(edge)
-		self.list_exon_edge = []
-		for edge in dic_edges:
-			if(len(dic_edges[edge]) != 1):
-				myRange = frange(-1,1,float(1/len(dic_edges[edge])))
-				compteur = 0
-				for i in myRange:
-					dic_edges[edge][compteur].y2 += i
-					self.append_exon_edge(dic_edges[edge][compteur])
-					compteur += 1
-					if(compteur > len(dic_edges[edge])-1):
-						break;			
+	#def calculate_edges(self,dicotrans):
+		#for trans in dicotrans:
+			#for i in range(len(dicotrans[trans].exons)-1):
+				#compteur = 0
+				#for edges in self.list_exon_edges:
+					#if(edges.ex1_id == dicotrans[trans].exons[i]):
+						#compteur += 1
+						
 		
 	def draw_SVG(self,fileName):
 		dwg = initDraw(fileName,self.width,self.height)
@@ -204,18 +194,19 @@ class drawing:
 			mon_fichier.write("\"edges\" : [ ")	
 			cptr = 0
 			for edge in self.list_exon_edges:
-				mon_fichier.write("{ \"x1\" : "+str(edge.x1)+",")
-				mon_fichier.write(" \"y1\" : "+str(edge.y1)+",")
-				mon_fichier.write(" \"x2\" : "+str(edge.x2)+",")
-				mon_fichier.write(" \"y2\" : "+str(edge.y2)+",")
-				mon_fichier.write(" \"x3\" : "+str(edge.x3)+",")
-				mon_fichier.write(" \"y3\" : "+str(edge.y3)+",")				
-				mon_fichier.write("\"id_transcript\" : \""+edge.transcript_id+"\"}")
+				mon_fichier.write("{\"path\" : [")
+				mon_fichier.write("{ \"x\" : "+str(edge.x1)+",")
+				mon_fichier.write(" \"y\" : "+str(edge.y1)+"},")
+				mon_fichier.write("{\"x\" : "+str(edge.x2)+",")
+				mon_fichier.write(" \"y\" : "+str(edge.y2)+"},")
+				mon_fichier.write("{\"x\" : "+str(edge.x3)+",")
+				mon_fichier.write(" \"y\" : "+str(edge.y3)+"}],")
+				mon_fichier.write("\"id_transcript\" : \""+edge.transcript_id+"\"}")				
 				if(cptr != len(self.list_exon_edges) - 1):
 					mon_fichier.write(",")
 				cptr += 1
-				
-		mon_fichier.write("]")
+			mon_fichier.write("]")
+		
 		mon_fichier.write("}")
 		mon_fichier.close()
 
@@ -508,7 +499,7 @@ elif args.listed:
 			y3 = box2.y
 			edge = exon_edge(x1,y1,x3,y3,trans,box1.id_exon,box2.id_exon)
 			draw.append_exon_edge(edge)
-	draw.calculate_edges()	
+	#draw.calculate_edges()	
 	if (args.svg_output):
 		draw.draw_SVG(args.output)
 	else:

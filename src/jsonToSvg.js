@@ -31,24 +31,20 @@ $.getJSON(exonFile, function(data) {
 
 	}
 	
+	var lineFunction = d3.svg.line()
+								.x(function(d) { return d.x;})
+								.y(function(d) { return d.y;})
+								.interpolate("linear");
+	
 	for (var k in data.edges){
-		line1 = svgContainer.append("line")
-							.attr("x1",data.edges[k].x1)
-							.attr("y1",data.edges[k].y1)
-							.attr("x2",data.edges[k].x2)
-							.attr("y2",data.edges[k].y2)
-							.attr("stroke-width", 2)
-							.attr("stroke", "grey")
-							.attr("id",data.edges[k].id_transcript);
+		var lineGraph = svgContainer.append("path")
+									.attr("d", lineFunction(data.edges[k].path))
+									.attr("stroke", "grey")
+									.attr("stroke-width",2)
+									.attr("fill","none")
+									.attr("stroke-opacity", 0.3)
+									.attr("id",data.edges[k].id_transcript);
 							
-		line2 = svgContainer.append("line")
-							.attr("x1",data.edges[k].x2)
-							.attr("y1",data.edges[k].y2)
-							.attr("x2",data.edges[k].x3)
-							.attr("y2",data.edges[k].y3)
-							.attr("stroke-width", 2)
-							.attr("stroke", "grey")
-							.attr("id",data.edges[k].id_transcript);
 	}
 	
 });

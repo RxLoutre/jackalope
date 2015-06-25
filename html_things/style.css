@@ -138,4 +138,8 @@ overflow: scroll;
   opacity:0.5;
 }
 
+#exons_edge:hover{
+	color: black;
+}
+
 
