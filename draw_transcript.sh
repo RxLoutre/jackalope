@@ -42,4 +42,4 @@ sed -e "s|%%SVG2%%|html_things/images/${SVGOUTPUT2}|g" html_things/jackalope_svg
 sed -e "s|%%AnalysisName%%|${OUTPUTDIR}|g" html_things/jackalope_svg3.html > html_things/jackalope_svg3Inter1.html
 sed -e "s|%%AnalysisTag%%|${JSONOUTPUT3}|g" html_things/jackalope_svg3Inter1.html > html_things/jackalope_svg3Inter2.html
 sed -e "s|%%SVG3%%|html_things/images/${SVGOUTPUT3}|g" html_things/jackalope_svg3Inter2.html > results/${OUTPUTDIR}/report/jackalope_svg3_${OUTPUTDIR}.html
-#firefox results/${OUTPUTDIR}/report/jackalope_svg3_${OUTPUTDIR}.html
+firefox results/${OUTPUTDIR}/report/jackalope_svg3_${OUTPUTDIR}.html

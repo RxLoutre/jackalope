@@ -53,29 +53,34 @@ $.getJSON(exonFile, function(data) {
 });
 
 $.getJSON(structureFile, function(data) {
-	for (var i in data.exons) {
-		alert(data.exons[i].id);
-		d3.selectAll("#"+data.exons[i].id)
-			.on("mouseover", function() {
-				colorIndice = 0;
-				for (var ts in data.exons[i].parents_transcripts){
-					d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
-						.attr("stroke-opacity" , 1)
-						.attr("stroke",couleur[colorIndice]);
-					colorIndice = colorIndice + 1;
+	d3.selectAll("rect")
+		.on("mouseover", function() {
+			var exon = d3.select(this).attr("id");			
+			for (var i in data.exons){
+				if(data.exons[i].id == exon){
+					colorIndice = 0;
+					for (var ts in data.exons[i].parents_transcripts){
+						d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
+							.attr("stroke-opacity" , 1)
+							.attr("stroke",couleur[colorIndice]);
+						colorIndice = colorIndice + 1;
+					}
 				}
-				
-			})
-			.on("mouseout", function() {
-				for (var ts in data.exons[i].parents_transcripts){
-					d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
-						.attr("stroke-opacity" , 0.2)
-						.attr("stroke","grey");
+			
+			}
+		})
+		.on("mouseout", function() {
+			var exon = d3.select(this).attr("id");			
+			for (var i in data.exons){
+				if(data.exons[i].id == exon){
+					for (var ts in data.exons[i].parents_transcripts){
+						d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
+							.attr("stroke-opacity" , 0.2)
+							.attr("stroke","grey");
+						}
+					}
 				}
-				
-			})
-									
-	}
-	
+		})
+			
 });
 

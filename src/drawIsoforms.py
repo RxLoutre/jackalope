@@ -512,13 +512,12 @@ elif args.listed:
 			interExon = finExon - debutExon
 			debutDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(debutExon-cc.minStart) + debutComposante
 			finDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(finExon-cc.minStart) + debutComposante
-			exBx = exon_box(numeroLigne,debutDessin,finDessin,listeCouleur[couleur],exon.ensemblId,exon.parentId)
+			exBx = exon_box(numeroLigne,debutDessin,finDessin,(104,111,140),exon.ensemblId,exon.parentId)
 			draw.append_exon_box(exBx)
 			currentExons.append(exon)
 			
 		i += 1
 		sumtemp += cc.maxLen
-		couleur = (couleur + 1) % len(listeCouleur)
 		numeroLigne = 1
 					
 	for trans in dicotrans:
