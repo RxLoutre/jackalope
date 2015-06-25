@@ -42,7 +42,8 @@ $.getJSON(exonFile, function(data) {
 									.attr("stroke", "grey")
 									.attr("stroke-width",2)
 									.attr("fill","none")
-									.attr("stroke-opacity", 0.3)
+									.attr("stroke-opacity", 0.2)
+									.style("stroke-dasharray", ("3, 3"))
 									.attr("id",data.edges[k].id_transcript);
 							
 	}

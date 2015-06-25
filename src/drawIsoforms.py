@@ -155,9 +155,9 @@ class drawing:
 				for edges in self.list_exon_edges:
 					if(edges.ex1_id == box1 and edges.ex2_id == box2):
 						compteur += 1
-				jump = float(10.0/compteur)
+				jump = float(5.0/compteur)
 				start = 0.0
-				end = 10.0
+				end = 5.0
 				for edges in self.list_exon_edges:
 					if(edges.ex1_id == box1 and edges.ex2_id == box2):
 						edges.y2 += start
@@ -500,10 +500,16 @@ elif args.listed:
 					box1 = ex_box
 				if(dicotrans[trans].exons[i+1].ensemblId == ex_box.id_exon):
 					box2 = ex_box
-			x1 = float(box1.x + box1.width)
-			y1 = float(box1.y) 
-			x3 = float(box2.x)
-			y3 = float(box2.y)
+			if(box1.x < box2.x):
+				x1 = float(box1.x + box1.width)
+				y1 = float(box1.y) 
+				x3 = float(box2.x)
+				y3 = float(box2.y)
+			else:
+				x1 = float(box2.x + box2.width)
+				y1 = float(box2.y) 
+				x3 = float(box1.x)
+				y3 = float(box1.y)
 			edge = exon_edge(x1,y1,x3,y3,trans,box1.id_exon,box2.id_exon)
 			draw.append_exon_edge(edge)
 	draw.calculate_edges(dicotrans)	
