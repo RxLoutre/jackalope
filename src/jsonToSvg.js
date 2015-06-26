@@ -1,8 +1,9 @@
 var elt = document.getElementById('file');
 var monTexte = elt.innerText || elt.textContent;
 var exonFile = "html_things/images/" + monTexte;
-var structureFile = "html_things/images/structure.json"
-var couleur = ["#B9121B","#5EB6DD","#C79F4B","#FF5B2B","#C44C51","#895959","#002F2F","#556627","#FF483D","#1D702D","#495CFF","#FC7F3C","#524633","#D400FF","#2E1C0B"]
+var structureFile = "html_things/images/structure.json";
+var legendFile = "html_things/images/legend.json";
+var couleur = ["#B9121B","#5EB6DD","#C79F4B","#FF5B2B","#C44C51","#895959","#002F2F","#556627","#FF483D","#1D702D","#495CFF","#FC7F3C","#524633","#D400FF","#2E1C0B"];
 $.getJSON(exonFile, function(data) {
 	var svgContainer = d3.select("body").append("svg")
 										.attr("width",data.xdessin)
@@ -55,6 +56,7 @@ $.getJSON(exonFile, function(data) {
 $.getJSON(structureFile, function(data) {
 	d3.selectAll("rect")
 		.on("mouseover", function() {
+			d3.select(this).attr("opacity",0.5);
 			var exon = d3.select(this).attr("id");			
 			for (var i in data.exons){
 				if(data.exons[i].id == exon){
@@ -62,7 +64,7 @@ $.getJSON(structureFile, function(data) {
 					for (var ts in data.exons[i].parents_transcripts){
 						d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
 							.attr("stroke-opacity" , 1)
-							.attr("stroke",couleur[colorIndice]);
+							.attr("stroke","rgb("+data.exons[i].parents_transcripts[ts].color.r+","+data.exons[i].parents_transcripts[ts].color.v+","+data.exons[i].parents_transcripts[ts].color.b+")");
 						colorIndice = colorIndice + 1;
 					}
 				}
@@ -70,6 +72,7 @@ $.getJSON(structureFile, function(data) {
 			}
 		})
 		.on("mouseout", function() {
+			d3.select(this).attr("opacity",1);
 			var exon = d3.select(this).attr("id");			
 			for (var i in data.exons){
 				if(data.exons[i].id == exon){
@@ -80,7 +83,33 @@ $.getJSON(structureFile, function(data) {
 						}
 					}
 				}
-		})
-			
+		});
+		
 });
 
+$.getJSON(legendFile, function(data) {
+	
+	var svgFooter = d3.select("#legend").append("svg")
+										.attr("width",500)
+										.attr("height",100);
+		for (var i in data.transcripts){
+			var text = svgFooter.append('foreignObject')
+								.attr('x', 10)
+								.attr('y', i*20)
+								.attr('width', 180)
+								.attr('height', 25)
+								.append("xhtml:body")
+								.html('<div >'+data.transcripts[i].id+'</div>');
+			var rectangle = svgFooter.append("rect")
+									.attr("x",250)
+									.attr("y",i*20)
+									.attr("width",100)
+									.attr("height",15)
+									.style("fill","rgb("+data.transcripts[i].color.r+","+data.transcripts[i].color.v+","+data.transcripts[i].color.b+")")
+									.attr("id", data.transcripts[i].id)
+									.append("title")
+									.text(function(d) { data.transcripts[i].id });
+									
+		}
+		
+});

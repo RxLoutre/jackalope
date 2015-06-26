@@ -4,11 +4,13 @@ and reorganize data into structures, using annotation.py, to make
 them easier to use.
 
 Once it has read and store data, it generate a SVG file, using svgwrite,
+or a JSON file which contains data concerning structures and exons_box
 to draw a representation of the gene and all his transcript.
 
-The script is able to produce two kind of drawing :
+The script is able to produce three kind of drawing :
 	- a draw with introns/exons represented proportionnaly with their positions in the chromosome
 	- a draw where introns length are fixed (to sigma) between differents groups of overlapping exons (called connected component)
+	- a draw where each exons appear just once and edges are representing all the transcript the exon belong
 	
 """
 import annotation
@@ -29,6 +31,7 @@ maxEndDessin = float(1150)
 espaceDessin = maxEndDessin - minStartDessin
 sigma = 30
 #drawDimension = 1200
+listeCouleur = [[231,62,1],[116,208,241],[240,195,0],[223,109,20],[76,166,107],[254, 150, 160],[165,38,10],[131,166,151],[223,255,0],[0,0,255],[253,108,158],[225,206,154],[222,228,196],[248,142,85],[198,8,0],[239,155,15],[1,215,88],[159,232,85],[189,51,164],[75,0,130],[128, 128, 0],[231, 168, 84],[11, 22, 22],[153, 122, 144]]
 
 #******Class and functions******#
 
@@ -213,7 +216,7 @@ class drawing:
 				mon_fichier.write(" \"y\" : "+str(edge.y2)+"},")
 				mon_fichier.write("{\"x\" : "+str(edge.x3)+",")
 				mon_fichier.write(" \"y\" : "+str(edge.y3)+"}],")
-				mon_fichier.write("\"id_transcript\" : \""+edge.transcript_id+"\"}")				
+				mon_fichier.write("\"id_transcript\" : \""+edge.transcript_id+"\"}")			
 				if(cptr != len(self.list_exon_edges) - 1):
 					mon_fichier.write(",")
 				cptr += 1
@@ -257,31 +260,49 @@ def genesFromGFF(fileName):
 				dicotrans[record.attributes["Parent"]].appendExon(e)
 	return [dicogene,dicotrans,dicoexons]
 	
-def writeAnnotationJson(nameFile,dicoexons):
-		mon_fichier = open(nameFile, "w")
-		mon_fichier.write("{")
-		compteur = 0
-		mon_fichier.write("\"exons\" : [")
-		for exon in dicoexons:			
-			mon_fichier.write("{\"id\" : \""+exon+"\",")
-			mon_fichier.write("\"start\" : "+str(dicoexons[exon].seqStart)+",")
-			mon_fichier.write("\"end\" : "+str(dicoexons[exon].seqEnd)+",")
-			mon_fichier.write("\"parents_transcripts\" : [")
-			cptr = 0
-			for trans in dicoexons[exon].parentId:
-				mon_fichier.write("{\"id\" : \""+trans+"\"}")
-				if(cptr != len(dicoexons[exon].parentId) - 1):
-					mon_fichier.write(",")
-				cptr += 1
-			mon_fichier.write("]")
-			mon_fichier.write("}")
-			if(compteur != len(dicoexons) - 1):
+def writeAnnotationJson(nameFile,legendFile,dicoexons,dicotrans):
+	listeTrans = dicotrans.keys()
+	listeTrans.sort()
+	couleur = 0
+	colorTranscript = {}
+	for transcrit in listeTrans:
+		colorTranscript[transcrit] = listeCouleur[couleur]
+		couleur = (couleur + 1) % len(listeCouleur)
+	my_legend = open(legendFile, "w")
+	mon_fichier = open(nameFile, "w")
+	mon_fichier.write("{")
+	my_legend.write("{")
+	compteur = 0
+	mon_fichier.write("\"exons\" : [")
+	my_legend.write("\"transcripts\" : [")
+	for legend in colorTranscript:
+		my_legend.write("{\"id\" : \""+legend+"\",")
+		my_legend.write("\"color\" : { \"r\" : "+str(colorTranscript[legend][0])+", \"v\" : "+str(colorTranscript[legend][1])+", \"b\" : "+str(colorTranscript[legend][2])+"}}")
+		if(compteur != len(colorTranscript) - 1):
+			my_legend.write(",")
+		compteur += 1
+	my_legend.write("]}")
+	compteur = 0
+	for exon in dicoexons:			
+		mon_fichier.write("{\"id\" : \""+exon+"\",")
+		mon_fichier.write("\"start\" : "+str(dicoexons[exon].seqStart)+",")
+		mon_fichier.write("\"end\" : "+str(dicoexons[exon].seqEnd)+",")
+		mon_fichier.write("\"parents_transcripts\" : [")
+		cptr = 0
+		for trans in dicoexons[exon].parentId:
+			mon_fichier.write("{\"id\" : \""+trans+"\",")
+			mon_fichier.write("\"color\" : { \"r\" : "+str(colorTranscript[trans][0])+", \"v\" : "+str(colorTranscript[trans][1])+", \"b\" : "+str(colorTranscript[trans][2])+"}}")
+			if(cptr != len(dicoexons[exon].parentId) - 1):
 				mon_fichier.write(",")
-			compteur += 1
-		mon_fichier.write("]")	
+			cptr += 1
+		mon_fichier.write("]")
 		mon_fichier.write("}")
-		mon_fichier.close()		
-			
+		if(compteur != len(dicoexons) - 1):
+			mon_fichier.write(",")
+		compteur += 1
+	mon_fichier.write("]")	
+	mon_fichier.write("}")
+	mon_fichier.close()			
 
 def initDraw(name,dimX,dimY):
 	"""
@@ -381,18 +402,18 @@ parser.add_argument("--listed", help="The resulting draw will only show a visual
 parser.add_argument("--specific-exon", help="You can specify a file name which contain a list of Ensembl ID of some exons you want to be highlighted")
 parser.add_argument("--svg-output", help="By default, this programm will generate a JSON output. With this option, the programm will generate directly SVG file instead of JSON file.")
 parser.add_argument("--annotation", help="If specified, it produce a JSON file which contains the structure of the gene in exons and transcript")
+parser.add_argument("--legend", help="If specified, it produce a JSON file which contains the legend with each color for each transcript")
 args = parser.parse_args()
 [dicogene,dicotrans,dicoexons] = genesFromGFF(args.file);	
 espaceTotalDessin = maxEndDessin - minStartDessin
-if(args.annotation):
-	writeAnnotationJson(args.annotation,dicoexons)
+if(args.annotation and args.legend):
+	writeAnnotationJson(args.annotation,args.legend,dicoexons,dicotrans)
 if args.print_count:
 	print "Total gene : " + str(len(dicogene)) + "\n"
 	print "Total transcrits : " + str(len(dicotrans)) + "\n"
 	print "Total exons : " + str(len(dicoexons)) + "\n"
 
 
-listeCouleur = [[231,62,1],[116,208,241],[240,195,0],[223,109,20],[76,166,107],[254, 150, 160],[165,38,10],[131,166,151],[223,255,0],[0,0,255],[253,108,158],[225,206,154],[222,228,196],[248,142,85],[198,8,0],[239,155,15],[1,215,88],[159,232,85],[189,51,164],[75,0,130],[128, 128, 0],[231, 168, 84],[11, 22, 22],[153, 122, 144]]
 espacement = 2
 couleur = 0
 i = 0

@@ -24,7 +24,7 @@ mkdir results/${OUTPUTDIR}/JSON
 mkdir results/${OUTPUTDIR}/report
 echo ${GENELIST} >> results/${OUTPUTDIR}/geneList.txt
 perl src/fetch_gene_annotation.pl -in results/${OUTPUTDIR}/geneList.txt -out results/${OUTPUTDIR}/GFF/${GFFOUTPUT} -specie Human
-python src/drawIsoforms.py --proportionnal --print-count --annotation results/${OUTPUTDIR}/JSON/structure.json results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT1}
+python src/drawIsoforms.py --proportionnal --print-count --annotation results/${OUTPUTDIR}/JSON/structure.json --legend results/${OUTPUTDIR}/JSON/legend.json results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT1}
 python src/drawIsoforms.py --fixed results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT2}
 python src/drawIsoforms.py --listed results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT3}
 cp -R html_things results/${OUTPUTDIR}/report
@@ -33,6 +33,7 @@ cp results/${OUTPUTDIR}/JSON/${JSONOUTPUT2} results/${OUTPUTDIR}/report/html_thi
 cp results/${OUTPUTDIR}/JSON/${JSONOUTPUT3} results/${OUTPUTDIR}/report/html_things/images/${JSONOUTPUT3}
 cp src/jsonToSvg.js results/${OUTPUTDIR}/report/jsonToSvg.js
 cp results/${OUTPUTDIR}/JSON/structure.json results/${OUTPUTDIR}/report/html_things/images/structure.json
+cp results/${OUTPUTDIR}/JSON/legend.json results/${OUTPUTDIR}/report/html_things/images/legend.json
 sed -e "s|%%AnalysisName%%|${OUTPUTDIR}|g" html_things/jackalope_svg1.html > html_things/jackalope_svg1Inter1.html
 sed -e "s|%%AnalysisTag%%|${JSONOUTPUT1}|g" html_things/jackalope_svg1Inter1.html > html_things/jackalope_svg1Inter2.html
 sed -e "s|%%SVG1%%|html_things/images/${SVGOUTPUT1}|g" html_things/jackalope_svg1Inter2.html > results/${OUTPUTDIR}/report/jackalope_svg1_${OUTPUTDIR}.html
