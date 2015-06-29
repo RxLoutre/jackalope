@@ -142,11 +142,9 @@ overflow: scroll;
 	color: black;
 }
 
-#footer {
-   position:fixed;
-   left:0px;
-   bottom:0px;
-   height:120px;
-   width:100%;
+#legend {
+	height: 200px;
+	width:100%;
+	overflow: scroll;
 }
 

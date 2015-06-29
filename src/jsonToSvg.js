@@ -80,36 +80,42 @@ $.getJSON(structureFile, function(data) {
 						d3.selectAll("#"+data.exons[i].parents_transcripts[ts].id)
 							.attr("stroke-opacity" , 0.2)
 							.attr("stroke","grey");
-						}
 					}
 				}
+			}
+
 		});
 		
 });
 
 $.getJSON(legendFile, function(data) {
 	
+	var nb_ts = data.nb_trans;
+	var h = 30 * nb_ts
 	var svgFooter = d3.select("#legend").append("svg")
-										.attr("width",500)
-										.attr("height",100);
-		for (var i in data.transcripts){
-			var text = svgFooter.append('foreignObject')
-								.attr('x', 10)
-								.attr('y', i*20)
-								.attr('width', 180)
-								.attr('height', 25)
-								.append("xhtml:body")
-								.html('<div >'+data.transcripts[i].id+'</div>');
-			var rectangle = svgFooter.append("rect")
-									.attr("x",250)
-									.attr("y",i*20)
-									.attr("width",100)
-									.attr("height",15)
-									.style("fill","rgb("+data.transcripts[i].color.r+","+data.transcripts[i].color.v+","+data.transcripts[i].color.b+")")
-									.attr("id", data.transcripts[i].id)
-									.append("title")
-									.text(function(d) { data.transcripts[i].id });
+										.attr("width",900)
+										.attr("height",h);
+		
+	for (var i in data.transcripts){
+		var text = svgFooter.append('foreignObject')
+							.attr('x', 10)
+							.attr('y', i*20)
+							.attr('width', 180)
+							.attr('height', 25)
+							.append("xhtml:body")
+							.html('<div >'+data.transcripts[i].id+'</div>');
+		var rectangle = svgFooter.append("rect")
+								.attr("x",250)
+								.attr("y",i*20)
+								.attr("width",100)
+								.attr("height",15)
+								.style("fill","rgb("+data.transcripts[i].color.r+","+data.transcripts[i].color.v+","+data.transcripts[i].color.b+")")
+								.attr("id", data.transcripts[i].id)
+								.append("title")
+								.text(function(d) { data.transcripts[i].id });
 									
-		}
+	}
+	
+	
 		
 });

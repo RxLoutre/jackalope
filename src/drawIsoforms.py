@@ -31,7 +31,7 @@ maxEndDessin = float(1150)
 espaceDessin = maxEndDessin - minStartDessin
 sigma = 30
 #drawDimension = 1200
-listeCouleur = [[231,62,1],[116,208,241],[240,195,0],[223,109,20],[76,166,107],[254, 150, 160],[165,38,10],[131,166,151],[223,255,0],[0,0,255],[253,108,158],[225,206,154],[222,228,196],[248,142,85],[198,8,0],[239,155,15],[1,215,88],[159,232,85],[189,51,164],[75,0,130],[128, 128, 0],[231, 168, 84],[11, 22, 22],[153, 122, 144]]
+listeCouleur = [[231,62,1],[116,208,241],[240,195,0],[223,109,20],[76,166,107],[254, 150, 160],[165,38,10],[131,166,151],[223,255,0],[0,0,255],[253,108,158],[23,101,125],[63,34,4],[248,142,85],[198,8,0],[239,155,15],[1,215,88],[159,232,85],[189,51,164],[75,0,130],[128, 128, 0],[231, 168, 84],[239, 155, 15],[153, 122, 144]]
 
 #******Class and functions******#
 
@@ -261,8 +261,16 @@ def genesFromGFF(fileName):
 	return [dicogene,dicotrans,dicoexons]
 	
 def writeAnnotationJson(nameFile,legendFile,dicoexons,dicotrans):
+	"""
+	A function which write two annotation files in JSON format,
+	legendFile : allow to draw informations concerning transcripts,
+	their colors and theirs exons
+	exonFile : in this file, the structure of each exon and a list
+	of their transcript
+	"""
 	listeTrans = dicotrans.keys()
 	listeTrans.sort()
+	nbTrans = len(listeTrans)
 	couleur = 0
 	colorTranscript = {}
 	for transcrit in listeTrans:
@@ -272,11 +280,22 @@ def writeAnnotationJson(nameFile,legendFile,dicoexons,dicotrans):
 	mon_fichier = open(nameFile, "w")
 	mon_fichier.write("{")
 	my_legend.write("{")
+	my_legend.write("\"nb_trans\" : "+str(nbTrans)+",")
 	compteur = 0
 	mon_fichier.write("\"exons\" : [")
 	my_legend.write("\"transcripts\" : [")
 	for legend in colorTranscript:
 		my_legend.write("{\"id\" : \""+legend+"\",")
+		my_legend.write("\"exons\" : [")
+		cptr = 0
+		for ex in dicotrans[legend].exons:
+			my_legend.write("{\"id\" : \""+ex.ensemblId+"\",")
+			my_legend.write("\"start\" : "+str(ex.seqStart)+",")
+			my_legend.write("\"end\" : "+str(ex.seqEnd)+"}")
+			if(cptr != len(dicotrans[legend].exons) - 1):
+				my_legend.write(",")
+			cptr += 1
+		my_legend.write("],")
 		my_legend.write("\"color\" : { \"r\" : "+str(colorTranscript[legend][0])+", \"v\" : "+str(colorTranscript[legend][1])+", \"b\" : "+str(colorTranscript[legend][2])+"}}")
 		if(compteur != len(colorTranscript) - 1):
 			my_legend.write(",")
@@ -406,6 +425,7 @@ parser.add_argument("--legend", help="If specified, it produce a JSON file which
 args = parser.parse_args()
 [dicogene,dicotrans,dicoexons] = genesFromGFF(args.file);	
 espaceTotalDessin = maxEndDessin - minStartDessin
+
 if(args.annotation and args.legend):
 	writeAnnotationJson(args.annotation,args.legend,dicoexons,dicotrans)
 if args.print_count:
