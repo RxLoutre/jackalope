@@ -310,7 +310,18 @@ def writeAnnotationJson(nameFile,legendFile,dicoexons,dicotrans):
 		cptr = 0
 		for trans in dicoexons[exon].parentId:
 			mon_fichier.write("{\"id\" : \""+trans+"\",")
-			mon_fichier.write("\"color\" : { \"r\" : "+str(colorTranscript[trans][0])+", \"v\" : "+str(colorTranscript[trans][1])+", \"b\" : "+str(colorTranscript[trans][2])+"}}")
+			mon_fichier.write("\"color\" : { \"r\" : "+str(colorTranscript[trans][0])+", \"v\" : "+str(colorTranscript[trans][1])+", \"b\" : "+str(colorTranscript[trans][2])+"},")
+			mon_fichier.write("\"related_exons\" : [")
+			count = 0
+			for ex in dicotrans[trans].exons:
+				mon_fichier.write("{\"id\" : \""+ex.ensemblId+"\",")
+				mon_fichier.write("\"start\" : "+str(ex.seqStart)+",")
+				mon_fichier.write("\"end\" : "+str(ex.seqEnd)+"}")
+				if(count != len(dicotrans[trans].exons) - 1):
+					mon_fichier.write(",")
+				count += 1
+			mon_fichier.write("]")
+			mon_fichier.write("}")
 			if(cptr != len(dicoexons[exon].parentId) - 1):
 				mon_fichier.write(",")
 			cptr += 1
