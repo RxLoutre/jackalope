@@ -112,6 +112,7 @@ $.getJSON(legendFile, function(data) {
 								.attr("y",i*20+5)
 								.attr("width",100)
 								.attr("height",15)
+								.attr("stroke","green")
 								.style("fill","rgb("+data.transcripts[i].color.r+","+data.transcripts[i].color.v+","+data.transcripts[i].color.b+")")
 								.attr("id", data.transcripts[i].id)
 								.on("mouseover", function() {
@@ -150,5 +151,5 @@ function listenExonSearch() {
 }
 
 function resetExonSearch(){
-	d3.selectAll("rect").attr("stroke","grey");   
+	d3.selectAll("rect").attr("stroke","green");   
 }
