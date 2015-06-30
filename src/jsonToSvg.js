@@ -16,6 +16,7 @@ $.getJSON(exonFile, function(data) {
 								.attr("y",data.exons[i].y)
 								.attr("width",data.exons[i].width)
 								.attr("height",data.exons[i].height)
+								.attr("stroke","green")
 								.style("fill","rgb("+data.exons[i].color.r+","+data.exons[i].color.v+","+data.exons[i].color.b+")")
 								.attr("id", data.exons[i].id_exon)
 								.append("title")
