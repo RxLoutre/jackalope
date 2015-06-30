@@ -98,6 +98,7 @@ $.getJSON(structureFile, function(data) {
 			for (var i in data.exons){
 				if(data.exons[i].id == exon){
 					var len = data.exons[i].end - data.exons[i].start;
+					document.getElementById("exon_id").textContent = exon;
 					document.getElementById("start").textContent =  data.exons[i].start;
 					document.getElementById("end").textContent = data.exons[i].end;
 					document.getElementById("length").textContent =  len;
