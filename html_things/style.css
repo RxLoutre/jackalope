@@ -1,3 +1,23 @@
+.btn {
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  -webkit-box-shadow: 2px 2px 3px #0d010d;
+  -moz-box-shadow: 2px 2px 3px #0d010d;
+  box-shadow: 2px 2px 3px #0d010d;
+  font-family: Georgia;
+  color: #ffffff;
+  font-size: 21px;
+  background: #5f6163;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #a7b3ba;
+  text-decoration: none;
+}
+
 header{
 	background-color : black;
 }
@@ -143,8 +163,28 @@ overflow: scroll;
 }
 
 #legend {
-	height: 200px;
-	width:100%;
+	height: 100px;
+	width:30%;
 	overflow: scroll;
+	overflow-x: hidden;
+	padding: 20px;
+	margin: 10px;
+	margin-top: 50px;
+	border-radius: 25px;
+    background: #8AC007;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#selector{
+	display: inline-block;
+	height: 100px;
+	width:60%;
+	padding: 20px;
+	margin: 10px;
+	margin-top: 50px;
+	border-radius: 25px;
+	background: #8AC007;
+	vertical-align: middle;
 }
 

@@ -29,7 +29,14 @@
 			
 		</header>
 		<div id="legend">
-		
+			<h1 style="font-size:30px; margin:0px">Legend</h1>
+			<p>Hover a rect to show transcript</p>
+		</div>
+		<div id="selector">
+			<h1 style="font-size:30px; margin:0px">Exon Selector</h1>
+			<input id="search_exon" type="text" value="Exon Ensembl Id" />
+			<input type="button" class="btn" value="Search" onclick="listenExonSearch()" />
+			<input type="button" class="btn" value="Reset" onclick="resetExonSearch()" />
 		</div>
 		<script src="jsonToSvg.js"></script>
 		

@@ -53,7 +53,6 @@ $.getJSON(exonFile, function(data) {
 });
 
 $.getJSON(structureFile, function(data) {
-	alert("script here");
 	d3.selectAll("rect")
 		.on("mouseover", function() {
 			d3.select(this).attr("opacity",0.5);
@@ -97,7 +96,7 @@ $.getJSON(legendFile, function(data) {
 	var nb_ts = data.nb_trans;
 	var h = 30 * nb_ts
 	var svgFooter = d3.select("#legend").append("svg")
-										.attr("width",900)
+										.attr("width",460)
 										.attr("height",h);
 		
 	for (var i in data.transcripts){
@@ -110,16 +109,46 @@ $.getJSON(legendFile, function(data) {
 							.html('<div >'+data.transcripts[i].id+'</div>');
 		var rectangle = svgFooter.append("rect")
 								.attr("x",250)
-								.attr("y",i*20)
+								.attr("y",i*20+5)
 								.attr("width",100)
 								.attr("height",15)
 								.style("fill","rgb("+data.transcripts[i].color.r+","+data.transcripts[i].color.v+","+data.transcripts[i].color.b+")")
 								.attr("id", data.transcripts[i].id)
+								.on("mouseover", function() {
+									d3.select(this).attr("opacity",0.5);
+									var id_ts = d3.select(this).attr("id");
+									d3.selectAll("#"+id_ts).attr("stroke-opacity" , 1)
+															.attr("stroke","black");
+								})
+								.on("mouseout", function() {
+									d3.select(this).attr("opacity",1);
+									var id_ts = d3.select(this).attr("id");
+									d3.selectAll("#"+id_ts).attr("stroke-opacity" , 0.5)
+															.attr("stroke","grey");
+								})
 								.append("title")
-								.text(function(d) { data.transcripts[i].id });
+								.text(function(d) { return data.transcripts[i].id });
+								
+								
 									
 	}
 	
 	
 		
 });
+
+function listenExonSearch() {
+    var exon = document.getElementById('search_exon');
+	var exon_id = exon.value;
+    if(exon_id == undefined){
+		alert("No exon match with this ID !");
+	}
+	else{
+		alert("Exon \"" + exon_id + "\" founded !");
+		d3.selectAll("#"+exon_id).attr("stroke","red");   
+	 }
+}
+
+function resetExonSearch(){
+	d3.selectAll("rect").attr("stroke","grey");   
+}
