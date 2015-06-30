@@ -88,6 +88,25 @@ $.getJSON(structureFile, function(data) {
 				}
 			}
 
+		})
+		.on("click", function() {
+			var exon = d3.select(this).attr("id");	
+			var start = document.getElementById("start").textContent;
+			var end = d3.select("#end");
+			var length = d3.select("#length");
+			var parents = d3.select("#parents");
+			for (var i in data.exons){
+				if(data.exons[i].id == exon){
+					var len = data.exons[i].end - data.exons[i].start;
+					document.getElementById("start").textContent =  data.exons[i].start;
+					document.getElementById("end").textContent = data.exons[i].end;
+					document.getElementById("length").textContent =  len;
+					document.getElementById("parents").textContent = "";
+					for (var ts in data.exons[i].parents_transcripts){
+						document.getElementById("parents").textContent = document.getElementById("parents").textContent + data.exons[i].parents_transcripts[ts].id + ", ";
+					}
+				}
+			}
 		});
 		
 });

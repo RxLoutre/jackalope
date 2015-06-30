@@ -29,10 +29,28 @@
 			
 		</header>
 		<div id="selector">
-		
+			<h1 style="font-size:30px; margin:0px">Exon Selector</h1>
+			<input id="search_exon" type="text" value="Exon Ensembl Id" />
+			<input type="button" class="btn" value="Search" onclick="listenExonSearch()" />
+			<input type="button" class="btn" value="Reset" onclick="resetExonSearch()" />
+		</div>
+		<div id="info_box">
+			<h1 style="font-size:30px; margin:0px">Exon data</h1>
+			<table class="myTable">
+				<tr>
+					<td colspan= "4" id="exon_id">Exon ID</td>					
+				</tr>
+				<tr>
+					<td id="start">Start : </td>
+					<td id="end">End : </td>
+					<td id="length">Length : </td>
+					<td id="parents">Parents : </td>					
+				</tr>
+			</table>
 		</div>
 		<script src="jsonToSvg.js"></script>
 		
 	</body>
-	
+	<footer>
+	</footer>
 </html>
