@@ -108,32 +108,46 @@ $.getJSON(legendFile, function(data) {
 							.attr('height', 25)
 							.append("xhtml:body")
 							.html('<div >'+data.transcripts[i].id+'</div>');
-		var rectangle = svgFooter.append("rect")
-								.attr("x",250)
-								.attr("y",i*20+5)
-								.attr("width",100)
-								.attr("height",15)
+		var ellipse = svgFooter.append("ellipse")
+								.attr("cx",250)
+								.attr("cy",i*20+15)
+								.attr("rx",20)
+								.attr("ry",10)
 								.attr("stroke","green")
 								.style("fill","rgb("+data.transcripts[i].color.r+","+data.transcripts[i].color.v+","+data.transcripts[i].color.b+")")
 								.attr("id", data.transcripts[i].id)
-								.on("mouseover", function() {
-									d3.select(this).attr("opacity",0.5);
-									var id_ts = d3.select(this).attr("id");
-									d3.selectAll("#"+id_ts).attr("stroke-opacity" , 1)
-															.attr("stroke","black");
-								})
-								.on("mouseout", function() {
-									d3.select(this).attr("opacity",1);
-									var id_ts = d3.select(this).attr("id");
-									d3.selectAll("#"+id_ts).attr("stroke-opacity" , 0.5)
-															.attr("stroke","grey");
-								})
 								.append("title")
 								.text(function(d) { return data.transcripts[i].id });
 								
 								
 									
 	}
+	d3.selectAll("ellipse").on("mouseover", function() {
+			d3.select(this).attr("opacity",0.5);
+			var id_ts = d3.select(this).attr("id");
+			d3.selectAll("#"+id_ts).attr("stroke-opacity" , 1)
+									.attr("stroke","black");
+			for (var i in data.transcripts){
+				if(data.transcripts[i].id == id_ts){
+					for (var exon in data.transcripts[i].exons ){
+						d3.select("#"+data.transcripts[i].exons[exon].id).attr("opacity",0.5);
+					}
+				}
+			}
+		})
+		.on("mouseout", function() {
+		d3.select(this).attr("opacity",1);
+			var id_ts = d3.select(this).attr("id");
+			d3.selectAll("#"+id_ts).attr("stroke-opacity" , 0.5)
+									.attr("stroke","grey");
+			for (var i in data.transcripts){
+				if(data.transcripts[i].id == id_ts){
+					for (var exon in data.transcripts[i].exons ){
+						d3.select("#"+data.transcripts[i].exons[exon].id).attr("opacity",1);
+					}
+				}
+			}
+		})
 	
 	
 		
