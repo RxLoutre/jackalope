@@ -181,12 +181,14 @@ function listenExonSearch() {
 	}
 	else{
 		alert("Exon \"" + exon_id + "\" founded !");
-		d3.selectAll("#"+exon_id).attr("stroke","red");   
+		d3.selectAll("#"+exon_id).attr("stroke","red")
+									.attr("stroke-width",4);   
 	 }
 }
 
 function resetExonSearch(){
-	d3.selectAll("rect").attr("stroke","green");   
+	d3.selectAll("rect").attr("stroke","green")
+	.attr("stroke-width",1);   
 }
 
 function getFasta(){
