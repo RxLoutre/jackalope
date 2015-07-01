@@ -21,9 +21,10 @@ mkdir results/${OUTPUTDIR}
 mkdir results/${OUTPUTDIR}/GFF
 mkdir results/${OUTPUTDIR}/SVG
 mkdir results/${OUTPUTDIR}/JSON
+mkdir results/${OUTPUTDIR}/FASTA
 mkdir results/${OUTPUTDIR}/report
 echo ${GENELIST} >> results/${OUTPUTDIR}/geneList.txt
-perl src/fetch_gene_annotation.pl -in results/${OUTPUTDIR}/geneList.txt -out results/${OUTPUTDIR}/GFF/${GFFOUTPUT} -specie Human
+perl src/fetch_gene_annotation.pl -in results/${OUTPUTDIR}/geneList.txt -out results/${OUTPUTDIR}/GFF/${GFFOUTPUT} -specie Human -fastaout results/${OUTPUTDIR}/FASTA/
 python src/drawIsoforms.py --proportionnal --print-count --annotation results/${OUTPUTDIR}/JSON/structure.json --legend results/${OUTPUTDIR}/JSON/legend.json results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT1}
 python src/drawIsoforms.py --fixed results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT2}
 python src/drawIsoforms.py --listed results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT3}

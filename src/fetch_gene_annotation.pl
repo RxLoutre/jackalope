@@ -6,6 +6,7 @@ my $registry = 'Bio::EnsEMBL::Registry';
 my $nomFichier;
 my $nomSortie;
 my $nomEspece;
+my $nomFasta;
 $registry->load_registry_from_db(
     -host => 'ensembldb.ensembl.org', # alternatively 'useastdb.ensembl.org'
     -user => 'anonymous'
@@ -13,14 +14,14 @@ $registry->load_registry_from_db(
     -DB_VERSION => 'GRCh37.p13'
 );
 
-GetOptions ("in=s" => \$nomFichier, "out=s" => \$nomSortie, "specie=s" => \$nomEspece) or die ("Impossible de recuperer les options !");   
+GetOptions ("in=s" => \$nomFichier, "out=s" => \$nomSortie, "specie=s" => \$nomEspece, "fastaout=s" => \$nomFasta) or die ("Impossible de recuperer les options !");   
 open(liste,"<".$nomFichier) or die("Impossible d'ouvrir le fichier listeIdGene.txt");
 my @geneList = <liste>;
 close(liste);
 my $nbGene = 1;
 foreach my $mygene (@geneList){
 	chomp($mygene);
-	&searchExon($nomEspece,$mygene,$registry,$nbGene,$nomSortie);
+	&searchExon($nomEspece,$mygene,$registry,$nbGene,$nomSortie,$nomFasta);
 	$nbGene = $nbGene + 1;	
 }
 
@@ -46,6 +47,16 @@ sub writeGFF {
 	open(f,">>".$nomFic) || die ("Vous ne pouvez pas créer/ouvrir le fichier");
 	my $gff = $seqid . "\t" . "ENSEMBL" . "\t" . $type . "\t" . $start . "\t" . $end . "\t" . $score . "\t" . $strand . "\t" . "." . "\t" . $attributs . "\n";
 	print f $gff;
+	close(f);	
+}
+
+sub writeFasta{
+	my $seq = $_[0];
+	my $id = $_[1];
+	my $nomFic = $_[2];
+	open(f,">".$nomFic) || die ("Vous ne pouvez pas créer/ouvrir le fichier");
+	my $fasta = ">" . $id ."\n" . $seq;
+	print f $fasta;
 	close(f);	
 }
 
@@ -90,6 +101,7 @@ sub searchExon {
 			$exonStrand = &convertStrand($exonStrand);
 			#Ecriture d'un exon
 			&writeGFF("chr".$gene->slice->seq_region_name(),"exon",$exonStart,$exonEnd,".",$exonStrand,"ID=".$exonId.",Parent=".$transId.",species=".$species,$nomSortie);
+			&writeFasta($exon->seq->seq(),$exonId,$nomFasta.$exonId.".fasta");
 		}
 	}
 	
