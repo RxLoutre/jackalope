@@ -176,14 +176,15 @@ $.getJSON(legendFile, function(data) {
 function listenExonSearch() {
     var exon = document.getElementById('search_exon');
 	var exon_id = exon.value;
-    if(exon_id == undefined){
-		alert("No exon match with this ID !");
+	var selection = d3.selectAll("#"+exon_id).attr("stroke","red")
+							.attr("stroke-width",4);  
+	if(selection.empty()){
+		alert("No exon matches witht his ID.");
 	}
-	else{
-		alert("Exon \"" + exon_id + "\" founded !");
-		d3.selectAll("#"+exon_id).attr("stroke","red")
-									.attr("stroke-width",4);   
-	 }
+	else {
+		alert("An exon with this ID matches !");
+	}
+	 
 }
 
 function resetExonSearch(){
