@@ -18,10 +18,26 @@
   text-decoration: none;
 }
 
+.lilbtn {
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Georgia;
+  color: #ffffff;
+  font-size: 13px;
+  background: #009c37;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.lilbtn:hover {
+  background: #acfc3c;
+  text-decoration: none;
+}
+
 .myTable {
 	margin:0px;padding:0px;
 	width:100%;
-	box-shadow: 10px 10px 5px #888888;
 	border:1px solid #000000;
 	
 	-moz-border-radius-bottomleft:0px;
@@ -76,8 +92,8 @@
 	border:1px solid #000000;
 	border-width:0px 1px 1px 0px;
 	text-align:left;
-	padding:2px;
-	font-size:10px;
+	padding:4px;
+	font-size:11px;
 	font-family:Arial;
 	font-weight:normal;
 	color:#000000;
@@ -98,7 +114,7 @@
 	text-align:center;
 	border-width:0px 0px 1px 1px;
 	font-size:14px;
-	font-family:Courier;
+	font-family:Arial;
 	font-weight:bold;
 	color:#ffffff;
 }

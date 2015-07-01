@@ -29,6 +29,7 @@ python src/drawIsoforms.py --proportionnal --print-count --annotation results/${
 python src/drawIsoforms.py --fixed results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT2}
 python src/drawIsoforms.py --listed results/${OUTPUTDIR}/GFF/${GFFOUTPUT} results/${OUTPUTDIR}/JSON/${JSONOUTPUT3}
 cp -R html_things results/${OUTPUTDIR}/report
+cp -R results/${OUTPUTDIR}/FASTA results/${OUTPUTDIR}/report
 cp results/${OUTPUTDIR}/JSON/${JSONOUTPUT1} results/${OUTPUTDIR}/report/html_things/images/${JSONOUTPUT1}
 cp results/${OUTPUTDIR}/JSON/${JSONOUTPUT2} results/${OUTPUTDIR}/report/html_things/images/${JSONOUTPUT2}
 cp results/${OUTPUTDIR}/JSON/${JSONOUTPUT3} results/${OUTPUTDIR}/report/html_things/images/${JSONOUTPUT3}

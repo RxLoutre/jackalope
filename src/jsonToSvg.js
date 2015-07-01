@@ -188,3 +188,9 @@ function listenExonSearch() {
 function resetExonSearch(){
 	d3.selectAll("rect").attr("stroke","green");   
 }
+
+function getFasta(){
+	var exon = document.getElementById("exon_id").textContent;
+	var fastaLink = "FASTA/"+exon+".fasta";
+	window.open(fastaLink);
+}
