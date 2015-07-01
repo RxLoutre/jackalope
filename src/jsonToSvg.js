@@ -1,8 +1,13 @@
+//The name of the studied gene is in a div named "file"
 var elt = document.getElementById('file');
 var monTexte = elt.innerText || elt.textContent;
+//exonFile will contains the path where the .json file containing informations concerning the draw
 var exonFile = "html_things/images/" + monTexte;
+//structure is used to see which exon belong to which transcript
+//legend is used to create a color code for each transcript
 var structureFile = "html_things/images/structure.json";
 var legendFile = "html_things/images/legend.json";
+//Creation of the SVG draw without any dynamic event
 $.getJSON(exonFile, function(data) {
 	var svgContainer = d3.select("body").append("svg")
 										.attr("width",data.xdessin)
@@ -52,7 +57,7 @@ $.getJSON(exonFile, function(data) {
 	}
 	
 });
-
+//Add dynamic event on exons
 $.getJSON(structureFile, function(data) {
 	d3.selectAll("rect")
 		.on("mouseover", function() {
@@ -111,7 +116,7 @@ $.getJSON(structureFile, function(data) {
 		});
 		
 });
-
+//Create a dynamic legend for transcript and their color (only for SVG3)
 $.getJSON(legendFile, function(data) {
 	
 	var nb_ts = data.nb_trans;
@@ -172,7 +177,7 @@ $.getJSON(legendFile, function(data) {
 	
 		
 });
-
+//A function to search a particular exon ID on the document
 function listenExonSearch() {
     var exon = document.getElementById('search_exon');
 	var exon_id = exon.value;
@@ -186,12 +191,12 @@ function listenExonSearch() {
 	}
 	 
 }
-
+//A function to reset each highlighted exon
 function resetExonSearch(){
 	d3.selectAll("rect").attr("stroke","green")
 	.attr("stroke-width",1);   
 }
-
+//A function to open a FASTA file of a selected exon
 function getFasta(){
 	var exon = document.getElementById("exon_id").textContent;
 	var fastaLink = "FASTA/"+exon+".fasta";

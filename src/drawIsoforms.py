@@ -149,6 +149,11 @@ class drawing:
 		self.list_exon_edges.append(edge)
 		
 	def calculate_edges(self,dicotrans):
+		"""
+		A function which calculate the number
+		of edges between all pairs of exons
+		in order to vizualize each edge properly
+		"""
 		dic_edge= {}
 		for trans in dicotrans:
 			for i in range(len(dicotrans[trans].exons)-1):
@@ -170,6 +175,11 @@ class drawing:
 				
 		
 	def draw_SVG(self,fileName):
+		"""
+		A function which write a draw object
+		using the SVGwrite python library, it produce
+		directly a static draw of theses draws
+		"""
 		dwg = initDraw(fileName,self.width,self.height)
 		for ex in self.list_exon_boxes:
 			drawExon(dwg,ex.y,ex.x,(ex.x + ex.width),ex.color,ex.id_exon)
@@ -178,6 +188,10 @@ class drawing:
 		dwg.save()
 		
 	def draw_JSON(self,nameFile,draw_edge):
+		"""
+		A function which write a draw object
+		into a JSON format in an output file
+		"""
 		cptr = 0
 		mon_fichier = open(nameFile, "w")
 		mon_fichier.write("{")
@@ -264,9 +278,11 @@ def writeAnnotationJson(nameFile,legendFile,dicoexons,dicotrans):
 	"""
 	A function which write two annotation files in JSON format,
 	legendFile : allow to draw informations concerning transcripts,
-	their colors and theirs exons
+	their colors and theirs exons, also others informations
+	are written in order to create JS dynamic events
 	exonFile : in this file, the structure of each exon and a list
-	of their transcript
+	of their transcript, also others informations
+	are written in order to create JS dynamic events
 	"""
 	listeTrans = dicotrans.keys()
 	listeTrans.sort()
@@ -415,6 +431,11 @@ def buildConnectedComp(G):
 	return listeConComp
 	
 def drawDimension(nbConnectedComponent,nbTranscript):
+	"""
+	A function which determines the dimension of the SVG draw
+	which allow to see every exons and every transcripts
+	properly
+	"""
 	nbIntrons = nbConnectedComponent - 1;
 	dimX = sigma * nbIntrons + (nbConnectedComponent) * 40 + 200
 	dimY = (exon_height*3) * nbTranscript + 100
