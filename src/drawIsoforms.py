@@ -597,7 +597,7 @@ elif args.listed:
 			interExon = finExon - debutExon
 			debutDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(debutExon-cc.minStart) + debutComposante
 			finDessin = ((finComposante-debutComposante)/(cc.maxEnd - cc.minStart))*(finExon-cc.minStart) + debutComposante
-			exBx = exon_box(numeroLigne,debutDessin,finDessin,(104,111,140),exon.ensemblId,exon.parentId)
+			exBx = exon_box(numeroLigne,debutDessin,finDessin,(173,200,221),exon.ensemblId,exon.parentId)
 			draw.append_exon_box(exBx)
 			currentExons.append(exon)
 			

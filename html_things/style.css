@@ -25,13 +25,13 @@
   font-family: Georgia;
   color: #ffffff;
   font-size: 13px;
-  background: #009c37;
+  background: #333333;
   padding: 10px 20px 10px 20px;
   text-decoration: none;
 }
 
 .lilbtn:hover {
-  background: #acfc3c;
+  background: #cccccc;
   text-decoration: none;
 }
 
@@ -92,8 +92,8 @@
 	border:1px solid #000000;
 	border-width:0px 1px 1px 0px;
 	text-align:left;
-	padding:4px;
-	font-size:11px;
+	padding:3px;
+	font-size:10px;
 	font-family:Arial;
 	font-weight:normal;
 	color:#000000;
@@ -105,25 +105,25 @@
 	border-width:0px 0px 0px 0px;
 }
 .myTable tr:first-child td{
-		background:-o-linear-gradient(bottom, #5fbf00 5%, #5fbf00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #5fbf00), color-stop(1, #5fbf00) );
-	background:-moz-linear-gradient( center top, #5fbf00 5%, #5fbf00 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#5fbf00", endColorstr="#5fbf00");	background: -o-linear-gradient(top,#5fbf00,5fbf00);
+		background:-o-linear-gradient(bottom, #aad4ff 5%, #aad4ff 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #aad4ff), color-stop(1, #aad4ff) );
+	background:-moz-linear-gradient( center top, #aad4ff 5%, #aad4ff 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#aad4ff", endColorstr="#aad4ff");	background: -o-linear-gradient(top,#aad4ff,aad4ff);
 
-	background-color:#5fbf00;
+	background-color:#aad4ff;
 	border:0px solid #000000;
 	text-align:center;
 	border-width:0px 0px 1px 1px;
 	font-size:14px;
 	font-family:Arial;
 	font-weight:bold;
-	color:#ffffff;
+	color:#7f7f7f;
 }
 .myTable tr:first-child:hover td{
-	background:-o-linear-gradient(bottom, #5fbf00 5%, #5fbf00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #5fbf00), color-stop(1, #5fbf00) );
-	background:-moz-linear-gradient( center top, #5fbf00 5%, #5fbf00 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#5fbf00", endColorstr="#5fbf00");	background: -o-linear-gradient(top,#5fbf00,5fbf00);
+	background:-o-linear-gradient(bottom, #aad4ff 5%, #aad4ff 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #aad4ff), color-stop(1, #aad4ff) );
+	background:-moz-linear-gradient( center top, #aad4ff 5%, #aad4ff 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#aad4ff", endColorstr="#aad4ff");	background: -o-linear-gradient(top,#aad4ff,aad4ff);
 
-	background-color:#5fbf00;
+	background-color:#aad4ff;
 }
 .myTable tr:first-child td:first-child{
 	border-width:0px 0px 1px 0px;
@@ -133,18 +133,19 @@
 }
 
 header{
-	background-color : black;
+	background-color : white;
+	background-image:url(images/background.jpg);
 }
 
 h1{
 	font-family: kikeletregular;
-	color: white;
+	color: #333333;
 	font-size: 50px;
 	margin: 20px;
 }
 
 h2{
-	color: white;
+	color: #333333;
 	font-size: 30px;
 	margin: 20px;
 	margin-left: 50px;
@@ -285,7 +286,7 @@ overflow: scroll;
 	margin: 10px;
 	margin-top: 50px;
 	border-radius: 25px;
-    background: #8AC007;
+    background: #E1EAF3;
     display: inline-block;
     vertical-align: middle;
 }
@@ -298,7 +299,7 @@ overflow: scroll;
 	margin: 10px;
 	margin-top: 50px;
 	border-radius: 25px;
-	background: #8AC007;
+	background: #ADC8DD;
 	vertical-align: middle;
 }
 
@@ -309,7 +310,7 @@ height: 100px;
 	margin: 10px;
 	margin-top: 50px;
 	border-radius: 25px;
-    background: #8AC007;
+    background: #C2D5E4;
     display: inline-block;
     vertical-align: middle;
 }
