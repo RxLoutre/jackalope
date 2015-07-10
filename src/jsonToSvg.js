@@ -15,6 +15,39 @@ $.getJSON(exonFile, function(data) {
 	var div = d3.select("body").append("div")   
 								.attr("class", "tooltip")               
 								.style("opacity", 0);
+	if(document.title == "SVG1"){						
+		var scaleLine = svgContainer.append("line")
+									.attr("x1", data.startScale)
+									.attr("y1", 0)
+									.attr("x2",data.startScale)
+									.attr("y2", data.ydessin)
+									.attr("stroke-width", 1)
+									.attr("stroke","grey")
+									.attr("stroke-opacity", 0.8)
+									.style("stroke-dasharray", ("2, 2"));
+		var scaleLine = svgContainer.append("line")
+									.attr("x1", data.endScale)
+									.attr("y1", 0)
+									.attr("x2",data.endScale)
+									.attr("y2", data.ydessin)
+									.attr("stroke-width", 1)
+									.attr("stroke","grey")
+									.attr("stroke-opacity", 0.8)
+									.style("stroke-dasharray", ("2, 2"));
+		var step = data.stepScale;													
+		for (i = 0; i < 9; i++){
+			var scaleLine = svgContainer.append("line")
+									.attr("x1", data.startScale + step)
+									.attr("y1", 0)
+									.attr("x2", data.startScale + step)
+									.attr("y2", data.ydessin)
+									.attr("stroke-width", 1)
+									.attr("stroke","grey")
+									.attr("stroke-opacity", 0.8)
+									.style("stroke-dasharray", ("2, 2"));
+			step = step + data.stepScale;
+		}
+	}
 	for (var i in data.exons) {
 		var rectangle = svgContainer.append("rect")
 								.attr("x",data.exons[i].x)

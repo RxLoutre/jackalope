@@ -192,11 +192,23 @@ class drawing:
 		A function which write a draw object
 		into a JSON format in an output file
 		"""
+		startScale = self.list_exon_boxes[0].x
+		endScale = self.list_exon_boxes[0].x + self.list_exon_boxes[0].width
+		for ex in self.list_exon_boxes:
+			if(ex.x < startScale):
+				startScale = ex.x
+			if(ex.x + ex.width > endScale):
+				endScale = ex.x + ex.width
+		lenScale = endScale - startScale
+		stepScale = float(lenScale) / 10.0
 		cptr = 0
 		mon_fichier = open(nameFile, "w")
 		mon_fichier.write("{")
 		mon_fichier.write("\"xdessin\" : "+str(self.width)+",")
 		mon_fichier.write("\"ydessin\" : "+str(self.height)+",")
+		mon_fichier.write("\"startScale\" : "+str(startScale)+",")
+		mon_fichier.write("\"endScale\" : "+str(endScale)+",")
+		mon_fichier.write("\"stepScale\" : "+str(stepScale)+",")
 		mon_fichier.write("\"exons\" : [ ")
 		for ex in self.list_exon_boxes:
 			mon_fichier.write("{\"x\" : "+str(ex.x)+",")
