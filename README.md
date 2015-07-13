@@ -18,6 +18,9 @@ To be fully functionnal, Jackalope requires a few stuff like :
   Download here => [Get SVGwrite](https://pypi.python.org/pypi/svgwrite/)
 - **networkx 1.10rc2**, a python module which allow to use graphs
   Download here => [Get networkx](https://pypi.python.org/pypi/networkx/)
+- **Perl 5 Version 18**
+- **Bioperl and it's dependecies** => To download easily it's dependecies, use the ubuntu software librairy and search for "bioperl"
+- **Perl API Ensembl** => [Get Ensembl API](ftp://ftp.ensembl.org/pub/ensembl-api.tar.gz) , [Need help to install it](http://www.ensembl.org/info/docs/api/api_installation.html)
   
 ###How does it works
 You can use Jackalope in two different way:
@@ -81,9 +84,22 @@ you don't have to connect to ENSEMBL database.
 In your "results" directory, you will soon have a huge list of directory containing
 each of us the same structure :
 - FASTA : contains, for each exon, a fasta file with the ensembl ID of the exon and his sequence
+/!\ It work only if you use the version with an ensembl ID, because fasta files are obtained with Ensembl API
 - GFF : it will contains, in any case, the GFF3 file used for the analysis
 - SVG : it is possible to specify to the python programm to make an SVG output, with statics draw...
   But by default JSON output is used.
 - JSON : this directory isn't the one your looking for... It's only used to store data between python and javascript
 - report : Ah ! This is the one you are looking for, in this directory, you will have your HTML results page, waiting for you
   just open it with your favorite browser. Choose one of the three html file ! (you can naviguate between theeses differents pages after all)
+
+
+
+![alt tag](jackalopeView.png)
+
+
+An example of a page results from jackalope;
+
+
+
+
+

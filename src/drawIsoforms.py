@@ -132,12 +132,14 @@ class drawing:
 	An intermediary class which contains all data for drawing all
 	the transcript of a gene
 	"""
-	def __init__(self,width,height):
+	def __init__(self,width,height,minStart,maxEnd):
 		self.list_exon_boxes = []
 		self.list_legend = []
 		self.list_exon_edges = []
 		self.width = width
 		self.height = height
+		self.numStart = minStart
+		self.numEnd = maxEnd
 		
 	def append_exon_box(self,exon_box):
 		self.list_exon_boxes.append(exon_box)
@@ -208,7 +210,8 @@ class drawing:
 		mon_fichier.write("\"ydessin\" : "+str(self.height)+",")
 		mon_fichier.write("\"startScale\" : "+str(startScale)+",")
 		mon_fichier.write("\"endScale\" : "+str(endScale)+",")
-		mon_fichier.write("\"stepScale\" : "+str(stepScale)+",")
+		mon_fichier.write("\"numStart\" : "+str(self.numStart)+",")
+		mon_fichier.write("\"numEnd\" : "+str(self.numEnd)+",")
 		mon_fichier.write("\"exons\" : [ ")
 		for ex in self.list_exon_boxes:
 			mon_fichier.write("{\"x\" : "+str(ex.x)+",")
@@ -428,6 +431,7 @@ def findMinMax(C):
 		composante.maxLen = maxEnd - minStart
 		composante.minStart = minStart
 		composante.maxEnd = maxEnd
+
 	
 def buildConnectedComp(G):
 	"""
@@ -452,6 +456,16 @@ def drawDimension(nbConnectedComponent,nbTranscript):
 	dimX = sigma * nbIntrons + (nbConnectedComponent) * 40 + 200
 	dimY = (exon_height*3) * nbTranscript + 100
 	return (dimX,dimY)
+	
+def retMinMax(dicoexons,keysdicoexons):
+	minStart = dicoexons[keysdicoexons[0]].seqStart
+	maxEnd = dicoexons[keysdicoexons[0]].seqEnd
+	for ex in dicoexons:
+		if(dicoexons[ex].seqStart < minStart):
+			minStart = dicoexons[ex].seqStart
+		if(dicoexons[ex].seqEnd > maxEnd):
+			maxEnd = dicoexons[ex].seqEnd
+	return (minStart,maxEnd)
 	
 #**************************MAIN********************************	
 
@@ -489,7 +503,6 @@ if args.fixed:
 	K = nx.number_connected_components(G)
 	nbTrans = len(dicotrans)
 	(dimensionX,dimensionY) = drawDimension(K,nbTrans)
-	draw = drawing(dimensionX,dimensionY)
 	#Calcul de Alpha => coefficient de proportionnalite entre coordonnees ecran et coordonnees chromosomiques
 	sumMaxLen = 0
 	for elem in C:
@@ -500,7 +513,10 @@ if args.fixed:
 	sumtemp = 0
 	numeroLigne = 1
 	listeTrans = dicotrans.keys()
+	listeExon = dicoexons.keys()
 	listeTrans.sort()
+	(minStart,maxEnd) = retMinMax(dicoexons,listeExon)
+	draw = drawing(dimensionX,dimensionY,minStart,maxEnd)
 	for trans in range(len(listeTrans)):
 		transcript_legend = legend_text(numeroLigne,listeTrans[trans])
 		draw.append_legend(transcript_legend)
@@ -534,7 +550,9 @@ elif args.proportionnal:
 	nbTrans = len(dicotrans)
 	numeroLigne = 1
 	dimY = (exon_height*3) * nbTrans + 100
-	draw = drawing(drawDimension,dimY)
+	listeExon = dicoexons.keys()
+	(minStart,maxEnd) = retMinMax(dicoexons,listeExon)
+	draw = drawing(drawDimension,dimY,minStart,maxEnd)
 	for genes in dicogene:
 		minStart = float(dicogene[genes].transcripts[0].exons[0].seqStart)
 		maxEnd = float(dicogene[genes].transcripts[0].exons[0].seqEnd)
@@ -571,7 +589,9 @@ elif args.listed:
 	nbTrans = len(dicotrans)
 	listEx = dicoexons.keys()
 	(dimensionX,dimensionY) = drawDimension(K,nbTrans)
-	draw = drawing(dimensionX,dimensionY)
+	listeExon = dicoexons.keys()
+	(minStart,maxEnd) = retMinMax(dicoexons,listeExon)
+	draw = drawing(dimensionX,dimensionY,minStart,maxEnd)
 	#Calcul de Alpha => coefficient de proportionnalite entre coordonnees ecran et coordonnees chromosomiques
 	sumMaxLen = 0
 	for elem in C:

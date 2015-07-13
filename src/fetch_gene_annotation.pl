@@ -10,8 +10,7 @@ my $nomFasta;
 $registry->load_registry_from_db(
     -host => 'ensembldb.ensembl.org', # alternatively 'useastdb.ensembl.org'
     -user => 'anonymous'
-    -verbose => '0'
-    -DB_VERSION => 'GRCh37.p13'
+    -verbose => '1'
 );
 
 GetOptions ("in=s" => \$nomFichier, "out=s" => \$nomSortie, "specie=s" => \$nomEspece, "fastaout=s" => \$nomFasta) or die ("Impossible de recuperer les options !");   

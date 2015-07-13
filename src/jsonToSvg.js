@@ -14,8 +14,7 @@ $.getJSON(exonFile, function(data) {
 										.attr("height",data.ydessin);
 	var div = d3.select("body").append("div")   
 								.attr("class", "tooltip")               
-								.style("opacity", 0);
-	if(document.title == "SVG1"){						
+								.style("opacity", 0);						
 		var scaleLine = svgContainer.append("line")
 									.attr("x1", data.startScale)
 									.attr("y1", 0)
@@ -34,20 +33,65 @@ $.getJSON(exonFile, function(data) {
 									.attr("stroke","grey")
 									.attr("stroke-opacity", 0.8)
 									.style("stroke-dasharray", ("2, 2"));
-		var step = data.stepScale;													
-		for (i = 0; i < 9; i++){
-			var scaleLine = svgContainer.append("line")
-									.attr("x1", data.startScale + step)
-									.attr("y1", 0)
-									.attr("x2", data.startScale + step)
-									.attr("y2", data.ydessin)
-									.attr("stroke-width", 1)
-									.attr("stroke","grey")
-									.attr("stroke-opacity", 0.8)
-									.style("stroke-dasharray", ("2, 2"));
-			step = step + data.stepScale;
-		}
-	}
+									
+		var scaleText = svgContainer.append('foreignObject')
+                        .attr('x', data.startScale)
+                        .attr('y', 2)
+                        .attr('width', 180)
+                        .attr('height', 25)
+                        .append("xhtml:body")
+						.html('<div >'+data.numStart+'</div>');
+						
+		var scaleText = svgContainer.append('foreignObject')
+                        .attr('x', data.endScale - 100)
+                        .attr('y', 2)
+                        .attr('width', 180)
+                        .attr('height', 25)
+                        .append("xhtml:body")
+						.html('<div >'+data.numEnd+'</div>');
+						
+		var scaleText = svgContainer.append('foreignObject')
+                        .attr('x', ((data.endScale - 100) + data.startScale)/2 )
+                        .attr('y', 2)
+                        .attr('width', 180)
+                        .attr('height', 25)
+                        .append("xhtml:body")
+						.html('<div >'+(data.numEnd-data.numStart)+ " bp" +'</div>');			
+						
+		var triangle1 = [ { "x": data.startScale,  "y": 2},  { "x": data.startScale + 10,  "y": 4},
+						 { "x": data.startScale + 10,  "y": 0}];
+						 
+		var triangle2 = [ { "x": data.endScale,   "y": 2},  { "x": data.endScale - 10 ,  "y": 4},
+						 { "x": data.endScale - 10,  "y": 0}];
+						 
+		var scaleLine = svgContainer.append("line")
+									.attr("x1", data.startScale)
+									.attr("y1", 2)
+									.attr("x2",data.endScale)
+									.attr("y2", 2)
+									.attr("stroke-width", 2)
+									.attr("stroke","#ADC8DD");			 
+						
+		var lineFunction = d3.svg.line()
+								.x(function(d) { return d.x;})
+								.y(function(d) { return d.y;})
+								.interpolate("linear");
+								
+	
+	
+		var arrow1 = svgContainer.append("path")
+									.attr("d", lineFunction(triangle1))
+									.attr("stroke", "#ADC8DD")
+									.attr("stroke-width",2)
+									.attr("fill","#ADC8DD");
+		var arrow2 = svgContainer.append("path")
+									.attr("d", lineFunction(triangle2))
+									.attr("stroke", "#ADC8DD")
+									.attr("stroke-width",2)
+									.attr("fill","#ADC8DD");							
+							
+		
+	
 	for (var i in data.exons) {
 		var rectangle = svgContainer.append("rect")
 								.attr("x",data.exons[i].x)
